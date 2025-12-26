@@ -1,0 +1,333 @@
+package main
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"sort"
+	"strings"
+	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/lipgloss"
+)
+
+const (
+	defaultRoot = "/home/sean/code"
+)
+
+var (
+	// styles
+	titleStyle   = lipgloss.NewStyle().Bold(true)
+	subtleStyle  = lipgloss.NewStyle().Faint(true)
+	statusOk     = lipgloss.NewStyle().Foreground(lipgloss.Color("42"))  // green-ish
+	statusWarn   = lipgloss.NewStyle().Foreground(lipgloss.Color("178")) // yellow-ish
+	statusErr    = lipgloss.NewStyle().Foreground(lipgloss.Color("1"))   // red
+	panelStyle   = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(1, 2)
+	headerStyle  = lipgloss.NewStyle().MarginBottom(1).Bold(true)
+	dividerStyle = lipgloss.NewStyle().Faint(true)
+)
+
+type projectItem struct {
+	name string
+	path string
+}
+
+func (i projectItem) Title() string       { return i.name }
+func (i projectItem) Description() string { return i.path }
+func (i projectItem) FilterValue() string { return i.name + " " + i.path }
+
+type actionItem struct {
+	label string
+	key   string // "vscode" | "nvim" | "alacritty"
+}
+
+func (i actionItem) Title() string       { return i.label }
+func (i actionItem) Description() string { return "" }
+func (i actionItem) FilterValue() string { return i.label }
+
+type mode int
+
+const (
+	modeProjects mode = iota
+	modeActions
+)
+
+type model struct {
+	root        string
+	mode        mode
+	projects    list.Model
+	actions     list.Model
+	width       int
+	height      int
+	statusLine  string
+	statusStamp time.Time
+}
+
+func newModel(root string) model {
+	if root == "" {
+		root = defaultRoot
+	}
+	projList := list.New(loadProjects(root), list.NewDefaultDelegate(), 0, 0)
+	projList.Title = fmt.Sprintf("Projects — %s", root)
+	projList.SetShowStatusBar(false)
+	projList.SetFilteringEnabled(true)
+	projList.Styles.Title = titleStyle
+	projList.Styles.PaginationStyle = subtleStyle
+	// projList.AdditionalFullHelpKeys = func() []keyBindingHelp { return []keyBindingHelp{} }
+
+	actions := list.New(loadActions(), list.NewDefaultDelegate(), 0, 0)
+	actions.Title = "Open with…"
+	actions.SetShowStatusBar(false)
+	actions.SetFilteringEnabled(false)
+	actions.Styles.Title = titleStyle
+	actions.SetShowHelp(false)
+	actions.SetShowFilter(false)
+
+	return model{
+		root:     root,
+		mode:     modeProjects,
+		projects: projList,
+		actions:  actions,
+	}
+}
+
+func loadProjects(root string) []list.Item {
+	entries, _ := os.ReadDir(root)
+	var items []list.Item
+	for _, e := range entries {
+		if e.IsDir() {
+			name := e.Name()
+			items = append(items, projectItem{
+				name: name,
+				path: filepath.Join(root, name),
+			})
+		}
+	}
+	sort.Slice(items, func(i, j int) bool {
+		return items[i].(projectItem).name < items[j].(projectItem).name
+	})
+	return items
+}
+
+func loadActions() []list.Item {
+	return []list.Item{
+		actionItem{label: "VS Code", key: "vscode"},
+		actionItem{label: "Neovim (in Alacritty)", key: "nvim"},
+		actionItem{label: "Alacritty (shell)", key: "alacritty"},
+	}
+}
+
+func (m model) Init() tea.Cmd { return nil }
+
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.width, m.height = msg.Width, msg.Height
+		// leave some room for header/status
+		availH := max(5, m.height-6)
+		m.projects.SetSize(m.width-4, availH)
+		m.actions.SetSize(min(60, m.width-10), min(10, availH))
+		return m, nil
+
+	case tea.KeyMsg:
+		switch m.mode {
+
+		case modeProjects:
+			switch msg.String() {
+			case "enter":
+				if m.projects.FilterState() == list.Filtering {
+					// when filtering, let list handle the enter
+					break
+				}
+				if it, ok := m.projects.SelectedItem().(projectItem); ok {
+					// switch to action picker
+					m.mode = modeActions
+					// center selection on first action
+					m.actions.Select(0)
+					return m, nil
+				}
+			case "r":
+				m.projects.SetItems(loadProjects(m.root))
+				m.flash(statusOk.Render("Rescanned."))
+				return m, nil
+			case "q", "ctrl+c", "esc":
+				if m.projects.FilterState() == list.Filtering {
+					// Esc clears filter; let list handle it
+					break
+				}
+				return m, tea.Quit
+			}
+			var cmd tea.Cmd
+			m.projects, cmd = m.projects.Update(msg)
+			return m, cmd
+
+		case modeActions:
+			switch msg.String() {
+			case "enter":
+				pi, ok1 := m.projects.SelectedItem().(projectItem)
+				ai, ok2 := m.actions.SelectedItem().(actionItem)
+				if ok1 && ok2 {
+					if err := spawn(ai.key, pi.path, pi.name); err != nil {
+						m.flash(statusErr.Render(err.Error()))
+					} else {
+						switch ai.key {
+						case "vscode":
+							m.flash(statusOk.Render("Launched VS Code → " + pi.name))
+						case "nvim":
+							m.flash(statusOk.Render("Launched Alacritty + Neovim → " + pi.name))
+						case "alacritty":
+							m.flash(statusOk.Render("Launched Alacritty → " + pi.name))
+						}
+					}
+				}
+				// Return to projects view
+				m.mode = modeProjects
+				return m, nil
+			case "esc", "q":
+				m.mode = modeProjects
+				return m, nil
+			}
+			var cmd tea.Cmd
+			m.actions, cmd = m.actions.Update(msg)
+			return m, cmd
+		}
+
+	case tickMsg:
+		// drop status after a couple seconds
+		if time.Since(m.statusStamp) > 3*time.Second && m.statusLine != "" {
+			m.statusLine = ""
+			return m, tick()
+		}
+	}
+	return m, nil
+}
+
+func (m model) View() string {
+	header := headerStyle.Render("Project Launcher (Bubble Tea)") + "\n" +
+		subtleStyle.Render("↑/↓ to move • / to filter • Enter to select • r to rescan • q to quit")
+	body := ""
+	switch m.mode {
+	case modeProjects:
+		body = panelStyle.Width(m.width - 2).Render(m.projects.View())
+	case modeActions:
+		// Center the action panel over the projects list
+		actionPanel := panelStyle.Copy().Width(min(60, m.width-10)).Render(m.actions.View())
+		body = panelStyle.Width(m.width - 2).Render(m.projects.View()) + "\n\n" +
+			lipgloss.Place(m.width, 10, lipgloss.Center, lipgloss.Center, actionPanel)
+	}
+	status := ""
+	if m.statusLine != "" {
+		status = "\n" + dividerStyle.Render(strings.Repeat("─", max(10, m.width-4))) + "\n" + m.statusLine
+	}
+	return header + "\n\n" + body + status
+}
+
+type tickMsg struct{}
+
+func tick() tea.Cmd {
+	return tea.Tick(250*time.Millisecond, func(time.Time) tea.Msg { return tickMsg{} })
+}
+
+func (m *model) flash(s string) {
+	m.statusLine = s
+	m.statusStamp = time.Now()
+}
+
+// ---------- spawn logic ----------
+
+func spawn(kind, path, name string) error {
+	switch kind {
+	case "vscode":
+		code := firstExisting([]string{"code", "code-oss"})
+		if code == "" {
+			return errors.New("VS Code not found (need 'code' or 'code-oss' in PATH)")
+		}
+		cmd := exec.Command(code, path)
+		return startDetached(cmd)
+
+	case "nvim":
+		term := which("alacritty")
+		if term == "" {
+			return errors.New("Alacritty not found (needed for Neovim action)")
+		}
+		nvim := which("nvim")
+		if nvim == "" {
+			return errors.New("Neovim not found")
+		}
+		cmd := exec.Command(term, "--working-directory", path, "-e", nvim)
+		return startDetached(cmd)
+
+	case "alacritty":
+		term := which("alacritty")
+		if term == "" {
+			return errors.New("Alacritty not found")
+		}
+		cmd := exec.Command(term, "--working-directory", path)
+		return startDetached(cmd)
+	}
+	return errors.New("unknown action")
+}
+
+func which(bin string) string {
+	if p, err := exec.LookPath(bin); err == nil {
+		return p
+	}
+	return ""
+}
+
+func firstExisting(bins []string) string {
+	for _, b := range bins {
+		if p := which(b); p != "" {
+			return p
+		}
+	}
+	return ""
+}
+
+func startDetached(cmd *exec.Cmd) error {
+	// Detach: inherit nothing important; don’t wait.
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+	cmd.Stdin = nil
+	// On Linux, this is enough for our use-case.
+	return cmd.Start()
+}
+
+// ---------- helpers ----------
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// ---------- main ----------
+
+func main() {
+	root := os.Getenv("PROJECTS_DIR")
+	if root == "" {
+		root = defaultRoot
+	}
+	if _, err := os.Stat(root); err != nil {
+		fmt.Println(statusErr.Render("Directory does not exist: " + root))
+		os.Exit(1)
+	}
+
+	p := tea.NewProgram(newModel(root), tea.WithAltScreen())
+	if _, err := p.Run(); err != nil {
+		fmt.Println(statusErr.Render("error: " + err.Error()))
+		os.Exit(1)
+	}
+}
+

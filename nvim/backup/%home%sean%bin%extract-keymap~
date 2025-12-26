@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# author:	Sean O'Beirne
+# file:		extract-keymap
+
+# usage: extract-keymap 
+
+# get the keymap from keymap.c for reference
+
+# keymap=~/code/qmk/keyboards/ferris/keymaps/sean-obeirne/keymap.c
+keymap=~/code/qmk/keyboards/inland/
+
+grep -n KEYMAP "$keymap" > /tmp/keymap
+
+begin=$(head -n 1 /tmp/keymap | cut -d ':' -f 1)
+end=$(tail -n 1 /tmp/keymap | cut -d ':' -f 1)
+
+head -n $end $keymap | tail -n $((end - begin + 1))
+
+

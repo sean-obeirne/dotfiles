@@ -1,0 +1,4 @@
+# Machine-specific files that shouldn't be synced
+fish/fish_variables
+fish/completions/
+.backups/

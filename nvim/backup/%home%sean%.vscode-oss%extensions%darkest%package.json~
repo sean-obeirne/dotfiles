@@ -1,0 +1,21 @@
+{
+  "name": "darkest",
+  "displayName": "darkest",
+  "description": "A locally exported VSCode theme.",
+  "version": "1.0.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.0.0"
+  },
+  "contributes": {
+    "themes": [
+      {
+        "label": "darkest",
+        "uiTheme": "vs-dark",
+        "path": "./themes/darkest.jsonc"
+      }
+    ]
+  }
+}
+
+

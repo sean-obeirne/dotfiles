@@ -1,0 +1,703 @@
+- cmd: logout
+  when: 1760508369
+- cmd: vim monitors.conf
+  when: 1760508369
+- cmd: nvim monitors.conf
+  when: 1760508369
+- cmd: xrandr
+  when: 1760508369
+- cmd: rand
+  when: 1760508369
+- cmd: yay
+  when: 1760508369
+- cmd: yay -S hyprmon-bin
+  when: 1760508369
+- cmd: ins
+  when: 1760508369
+- cmd: pacman -S firefox
+  when: 1760508369
+- cmd: sudo pacman -S firefox
+  when: 1760508369
+- cmd: git clone git@github.com:sean-obeirne/qmk.git
+  when: 1760508369
+- cmd: git clone https://github.com/sean-obeirne/qmk.git
+  when: 1760508369
+- cmd: rm -rf qmk/
+  when: 1760508369
+- cmd: lst
+  when: 1760508369
+- cmd: nvim ssh-key
+  when: 1760508369
+- cmd: sh
+  when: 1760508369
+- cmd: chmod +x ssh-key
+  when: 1760508369
+- cmd: ./ssh-key
+  when: 1760508369
+- cmd: exit
+  when: 1760508373
+- cmd: ins neofetch
+  when: 1760508462
+- cmd: ains neofetch
+  when: 1760508473
+- cmd: pacman -S neofetch
+  when: 1760508535
+- cmd: sudo pacman -S neofetch
+  when: 1760508538
+- cmd: mkdir applications
+  when: 1760508571
+- cmd: git clone https://aur.archlinux.org/neofetch.git
+  when: 1760508597
+- cmd: cd neofetch/
+  when: 1760508600
+  paths:
+    - neofetch/
+- cmd: gpg --recv-keys 46D62DD9F1DE636E
+  when: 1760508640
+- cmd: makepkg -si
+  when: 1760508645
+- cmd: neofetch]
+  when: 1760508656
+- cmd: neofetch
+  when: 1760508657
+- cmd: sudo chsh -s /usr/bin/fish
+  when: 1760508790
+  paths:
+    - /usr/bin/fish
+- cmd: echo $SHELL
+  when: 1760508843
+- cmd: hyprmon
+  when: 1760508975
+- cmd: git clone https://github.com/sean-obeirne/bin.git
+  when: 1760509161
+- cmd: git clone git@github.com:sean-obeirne/bin.git
+  when: 1760509182
+- cmd: ls bin
+  when: 1760509193
+  paths:
+    - bin
+- cmd: cd bin
+  when: 1760509220
+  paths:
+    - bin
+- cmd: git clone git@github.com:sean-obeirne/scripts.git
+  when: 1760509242
+- cmd: cd scripts/
+  when: 1760509249
+  paths:
+    - scripts/
+- cmd: /ls
+  when: 1760509455
+- cmd: cd qmk
+  when: 1760509471
+  paths:
+    - qmk
+- cmd: cd keyboards/
+  when: 1760509479
+  paths:
+    - keyboards/
+- cmd: cd in
+  when: 1760509482
+- cmd: cd inland/mk47/
+  when: 1760509487
+  paths:
+    - inland/mk47/
+- cmd: sudo pacman -S --needed git python-pip dfu-util avr-gcc arm-none-eabi-gcc arm-none-eabi-binutils arm-none-eabi-newlib avrdude
+  when: 1760509528
+- cmd: sudo pip install qmk
+  when: 1760509590
+- cmd: pip install --user qmk
+  when: 1760509604
+- cmd: pacman -S qmk
+  when: 1760509616
+- cmd: sudo pacman -S qmk
+  when: 1760509620
+- cmd: qmk setup
+  when: 1760509630
+- cmd: fdsa
+  when: 1760509859
+- cmd: vim keymaps/sean/
+  when: 1760509879
+  paths:
+    - keymaps/sean/
+- cmd: vim keymaps/sean/keymap.c
+  when: 1760509883
+  paths:
+    - keymaps/sean/keymap.c
+- cmd: cd ../../../
+  when: 1760509950
+  paths:
+    - ../../../
+- cmd: git submodule update --init --recursive
+  when: 1760509959
+- cmd: ls lib/lufa/
+  when: 1760509995
+  paths:
+    - lib/lufa/
+- cmd: git submodule deinit -f .\ngit submodule update --init --recursive
+  when: 1760510007
+  paths:
+    - .
+- cmd: cd ~
+  when: 1760510111
+  paths:
+    - ~
+- cmd: cd applications/
+  when: 1760510112
+  paths:
+    - applications/
+- cmd: git clone https://github.com/WeActStudio/WB32-DFU-Updater.git
+  when: 1760510134
+- cmd: git clone git@github.com:WeActStudio/WB32-DFU-Updater.git
+  when: 1760510194
+- cmd: git clone https://github.com/WestberryTech/wb32-dfu-updater.git
+  when: 1760510311
+- cmd: cd wb32-dfu-updater/
+  when: 1760510316
+  paths:
+    - wb32-dfu-updater/
+- cmd: bash ./bootstrap.sh install
+  when: 1760510324
+  paths:
+    - ./bootstrap.sh
+- cmd: ins cmake
+  when: 1760510339
+  paths:
+    - cmake
+- cmd: ins libusb
+  when: 1760510355
+- cmd: sudo bash ./bootstrap.sh install
+  when: 1760510363
+  paths:
+    - ./bootstrap.sh
+- cmd: wb32-dfu-updater_cli
+  when: 1760510371
+- cmd: which wb32-dfu-updater_cli
+  when: 1760510374
+- cmd: cd qmk/
+  when: 1760510398
+  paths:
+    - qmk/
+- cmd: mkdir code
+  when: 1760510408
+- cmd: mv qmk/ code/
+  when: 1760510412
+  paths:
+    - qmk/
+    - code/
+- cmd: cd inland/mk47/keymaps/sean/
+  when: 1760529870
+  paths:
+    - inland/mk47/keymaps/sean/
+- cmd: vim keymap.c
+  when: 1760529891
+  paths:
+    - keymap.c
+- cmd: ins code
+  when: 1760530558
+  paths:
+    - code
+- cmd: cd Downloads/
+  when: 1760533090
+  paths:
+    - Downloads/
+- cmd: unzip ~/Downloads/vscode_settings.zip -d ~/.config/Code/User/
+  when: 1760533108
+- cmd: unzip ~/Downloads/vscode-configs.zip -d ~/.config/Code/User/
+  when: 1760533115
+  paths:
+    - ~/Downloads/vscode-configs.zip
+- cmd: code-oss
+  when: 1760533208
+- cmd: unzip ~/Downloads/vscode_settings.zip -d ~/.config/Code\\ -\\ OSS/User/
+  when: 1760533254
+  paths:
+    - ~/.config/Code\\ -\\ OSS/User/
+- cmd: unzip ~/Downloads/vscode-configs.zip -d ~/.config/Code\\ -\\ OSS/User/
+  when: 1760533262
+  paths:
+    - ~/Downloads/vscode-configs.zip
+    - ~/.config/Code\\ -\\ OSS/User/
+- cmd: cd Documents/
+  when: 1760534037
+- cmd: cd configs/
+  when: 1760534041
+  paths:
+    - configs/
+- cmd: cd backups/tinkerhub/
+  when: 1760534054
+  paths:
+    - backups/tinkerhub/
+- cmd: mv  ~/.config/nvim/ ~/.config/nvim.origin
+  when: 1760534120
+  paths:
+    - ~/.config/nvim/
+- cmd: cp nvim/ ~/.config/nvim
+  when: 1760534133
+  paths:
+    - nvim/
+- cmd: cp -r nvim/ ~/.config/nvim
+  when: 1760534136
+  paths:
+    - nvim/
+- cmd: cd nvim/
+  when: 1760534214
+  paths:
+    - nvim/
+- cmd: nvim --headless --cmd 'echo stdpath("config") | q'
+  when: 1760534289
+- cmd: git clone --depth 1 https://github.com/wbthomason/packer.nvim \\\n  ~/.local/share/nvim/site/pack/packer/start/packer.nvimj/
+  when: 1760534362
+- cmd: rm -rf ~/.local/share/nvim/site/pack/packer\nrm -rf ~/.cache/nvim\nrm -f ~/.config/nvim/plugin/packer_compiled.lua
+  when: 1760534489
+  paths:
+    - ~/.local/share/nvim/site/pack/packer
+    - ~/.cache/nvim
+    - ~/.config/nvim/plugin/packer_compiled.lua
+- cmd: cd
+  when: 1760534638
+- cmd: cd sean-obeirne/
+  when: 1760534646
+  paths:
+    - sean-obeirne/
+- cmd: git pull
+  when: 1760534665
+- cmd: nvim inland/mk47/keymaps/sean/keymap.c
+  when: 1760535012
+  paths:
+    - inland/mk47/keymaps/sean/keymap.c
+- cmd: ins flatpak
+  when: 1760535100
+- cmd: ains runescape-launcher
+  when: 1760535241
+- cmd: ain
+  when: 1760535283
+- cmd: ains
+  when: 1760535284
+- cmd: yay -S runescape-launcher
+  when: 1760535300
+- cmd: runescape-launcher
+  when: 1760535325
+- cmd: uins runescape-launcher
+  when: 1760535351
+- cmd: yay -S runelite
+  when: 1760535381
+- cmd: runelite
+  when: 1760535395
+- cmd: uins runelite runescape-launcher-debug
+  when: 1760535538
+- cmd: yay -S osrs-launcher
+  when: 1760535565
+- cmd: osrs
+  when: 1760535594
+- cmd: osrs-launcher
+  when: 1760535596
+- cmd: uins osrs-launcher
+  when: 1760535687
+- cmd: flatpak install com.adamcake.Bolt
+  when: 1760535786
+- cmd: cdconf
+  when: 1760535876
+- cmd: flatpak run com.adamcake.Bolt
+  when: 1760535972
+- cmd: git clone --depth 1 https://github.com/wbthomason/packer.nvim \\\n  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+  when: 1760540524
+- cmd: vim init.lua
+  when: 1760540562
+  paths:
+    - init.lua
+- cmd: vim lua/vim-config.lua
+  when: 1760540603
+  paths:
+    - lua/vim-config.lua
+- cmd: nvim --version
+  when: 1760541104
+- cmd: vim kry
+  when: 1760541778
+- cmd: mv kry keys
+  when: 1760541793
+  paths:
+    - kry
+- cmd: cd .config/fish/
+  when: 1760542483
+  paths:
+    - .config/fish/
+- cmd: cd conf.d/
+  when: 1760542486
+  paths:
+    - conf.d/
+- cmd: vim prompt.fish
+  when: 1760542488
+  paths:
+    - prompt.fish
+- cmd: vim config.fish
+  when: 1760542496
+  paths:
+    - config.fish
+- cmd: vim conf.d/alias.fish
+  when: 1760542506
+  paths:
+    - conf.d/alias.fish
+- cmd: vim conf.d/env.fish
+  when: 1760542513
+  paths:
+    - conf.d/env.fish
+- cmd: vim conf.d/prompt.fish
+  when: 1760542519
+  paths:
+    - conf.d/prompt.fish
+- cmd: cd ~/.local/
+  when: 1760542580
+  paths:
+    - ~/.local/
+- cmd: cd share/
+  when: 1760542582
+  paths:
+    - share/
+- cmd: cd nvim/site/pack/packer/start/packer.nvim
+  when: 1760542679
+  paths:
+    - nvim/site/pack/packer/start/packer.nvim
+- cmd: cat packer
+  when: 1760542686
+  paths:
+    - packer
+- cmd: cat packer.lua
+  when: 1760542687
+  paths:
+    - packer.lua
+- cmd: cp Downloads/nvim-config.zip ./.config/nvim/
+  when: 1760543121
+  paths:
+    - Downloads/nvim-config.zip
+    - ./.config/nvim/
+- cmd: cd .config/nvim
+  when: 1760543126
+  paths:
+    - .config/nvim
+- cmd: cp nvim-config.zip ../
+  when: 1760543141
+  paths:
+    - nvim-config.zip
+    - ../
+- cmd: mv nvim nvim.midway
+  when: 1760543162
+  paths:
+    - nvim
+- cmd: mkdir nvim
+  when: 1760543169
+- cmd: cd nvim
+  when: 1760543172
+  paths:
+    - nvim
+- cmd: mv ../nvim-config.zip .
+  when: 1760543187
+  paths:
+    - ../nvim-config.zip
+    - .
+- cmd: unzip nvim-config.zip
+  when: 1760543192
+  paths:
+    - nvim-config.zip
+- cmd: rm lua/plugins/peek.lua
+  when: 1760543235
+  paths:
+    - lua/plugins/peek.lua
+- cmd: cd lua/config/
+  when: 1760543320
+  paths:
+    - lua/config/
+- cmd: ins go
+  when: 1760544483
+- cmd: go version
+  when: 1760544501
+- cmd: go install golang.org/x/tools/gopls@latest
+  when: 1760544515
+- cmd: sudo pacman -S nodejs npm
+  when: 1760544678
+- cmd: npm install -g pyright\nnpm install -g intelephense\nnpm install -g vscode-langservers-extracted  # for cssls and html among others
+  when: 1760544697
+- cmd: npm install -g pyright
+  when: 1760544715
+- cmd: su
+  when: 1760544719
+- cmd: sudo npm install -g pyright
+  when: 1760544760
+- cmd: sudo npm install -g intelephense
+  when: 1760544771
+- cmd: sudo npm install vscode-langservers-extracted
+  when: 1760544795
+- cmd: sudo pacman -S elixir erlang
+  when: 1760544846
+- cmd: jls
+  when: 1760544865
+- cmd: elixir --version
+  when: 1760544916
+- cmd: sudo pacman -S erlang
+  when: 1760544924
+- cmd: go install github.com/lighttiger2505/sqls@latest
+  when: 1760545022
+- cmd: nvim newfile
+  when: 1760545105
+- cmd: rm -rf ~/.local/share/nvim/site/pack/packer/start/
+  when: 1760545429
+  paths:
+    - ~/.local/share/nvim/site/pack/packer/start/
+- cmd: nvim .
+  when: 1760545600
+  paths:
+    - .
+- cmd: ls -la
+  when: 1760545614
+- cmd: cd lua/
+  when: 1760545627
+  paths:
+    - lua/
+- cmd: ls grep -r "elixir" ../
+  when: 1760545684
+  paths:
+    - ../
+- cmd: grep -r "elixir" ../
+  when: 1760545695
+  paths:
+    - ../
+- cmd: rm -rf backup/*
+  when: 1760545730
+- cmd: rm -rf swap/*
+  when: 1760545735
+- cmd: reboot
+  when: 1760545836
+- cmd: which elixrls
+  when: 1760546101
+- cmd: which elixr-ls
+  when: 1760546108
+- cmd: uins elixir
+  when: 1760546130
+- cmd: uins elixir-ls
+  when: 1760546143
+- cmd: uins elixirls
+  when: 1760546146
+- cmd: nvim lua/config/keybind-config.lua
+  when: 1760546292
+  paths:
+    - lua/config/keybind-config.lua
+- cmd: nvim test
+  when: 1760546374
+- cmd: nvim
+  when: 1760546380
+- cmd: sudo qmk flash -kb inland/mk47 -km sean
+  when: 1760549430
+  paths:
+    - inland/mk47
+- cmd: cd ../../
+  when: 1760549670
+  paths:
+    - ../../
+- cmd: cd /
+  when: 1760549987
+  paths:
+    - /
+- cmd: find ~ -name ".vimrc"
+  when: 1760549992
+  paths:
+    - ~
+- cmd: nvim .vimrc
+  when: 1760550010
+- cmd: qmk flash -kb inland/mk47 -km sean
+  when: 1760550721
+- cmd: qmk compile -kb inland/mk47 -km sean
+  when: 1760551373
+- cmd: arcc
+  when: 1760553403
+- cmd: arc
+  when: 1760553404
+- cmd: vim .config/hypr/bindings.conf
+  when: 1760553474
+  paths:
+    - .config/hypr/bindings.conf
+- cmd: vim .config/hypr/
+  when: 1760553629
+  paths:
+    - .config/hypr/
+- cmd: :q
+  when: 1760553677
+- cmd: cd .config/hypr/
+  when: 1760553691
+- cmd: yazi
+  when: 1760553700
+- cmd: ins yazi
+  when: 1760553703
+- cmd: cd ../
+  when: 1760553766
+- cmd: grep -R "SUPER.*V" ~/.config/hypr
+  when: 1760553768
+  paths:
+    - ~/.config/hypr
+- cmd: grep -R "SUPER.*V" .
+  when: 1760553773
+  paths:
+    - .
+- cmd: cd .local/share/omarchy/default/hypr/bindings/
+  when: 1760553798
+  paths:
+    - .local/share/omarchy/default/hypr/bindings/
+- cmd: vim tiling.conf
+  when: 1760553801
+  paths:
+    - tiling.conf
+- cmd: flash
+  when: 1760553982
+- cmd: j
+  when: 1760554008
+- cmd: nvk
+  when: 1760554079
+- cmd: frc
+  when: 1760554177
+- cmd: cdn
+  when: 1760554229
+- cmd: cd lua
+  when: 1760554235
+  paths:
+    - lua
+- cmd: cd config
+  when: 1760554241
+  paths:
+    - config
+- cmd: vim nvim-config.lua
+  when: 1760554246
+  paths:
+    - nvim-config.lua
+- cmd: cd ..
+  when: 1760554262
+  paths:
+    - ..
+- cmd: ..
+  when: 1760554262
+- cmd: n
+  when: 1760554263
+- cmd: code
+  when: 1760554563
+- cmd: q
+  when: 1760554600
+- cmd: hrc
+  when: 1760554656
+- cmd: omarchy-restart-app
+  when: 1760554743
+- cmd: cdk
+  when: 1760554965
+- cmd: diff ferris/keymaps/sean-obeirne/keymap.c
+  when: 1760554980
+  paths:
+    - ferris/keymaps/sean-obeirne/keymap.c
+- cmd: git diff ferris/keymaps/sean-obeirne/keymap.c
+  when: 1760555002
+  paths:
+    - ferris/keymaps/sean-obeirne/keymap.c
+- cmd: gad ferris/keymaps/sean-obeirne/keymap.c
+  when: 1760555015
+  paths:
+    - ferris/keymaps/sean-obeirne/keymap.c
+- cmd: com
+  when: 1760555017
+- cmd: com "added a regular window shortcut"
+  when: 1760555032
+- cmd: clear
+  when: 1760555049
+- cmd: ls
+  when: 1760555050
+- cmd: gad inland/mk47/keymaps/sean/*
+  when: 1760555065
+- cmd: gst
+  when: 1760555066
+- cmd: com "created for inland keyboard!"
+  when: 1760555079
+- cmd: gst
+  when: 1760555080
+- cmd: q
+  when: 1760555082
+- cmd: jls
+  when: 1760555201
+- cmd: ls
+  when: 1760555202
+- cmd: q
+  when: 1760555205
+- cmd: ls
+  when: 1760556472
+- cmd: nvk
+  when: 1760556481
+- cmd: flash
+  when: 1760556516
+- cmd: ls
+  when: 1760556543
+- cmd: nvk
+  when: 1760556592
+- cmd: ls
+  when: 1760556757
+- cmd: q
+  when: 1760556758
+- cmd: flash
+  when: 1760557004
+- cmd: cdk
+  when: 1760557041
+- cmd: flash
+  when: 1760557043
+- cmd: :
+  when: 1760557096
+- cmd: q
+  when: 1760557096
+- cmd: cdk
+  when: 1760558583
+- cmd: qmk compile -kb inland/mk47 -km sean
+  when: 1760558586
+  paths:
+    - inland/mk47
+- cmd: flash
+  when: 1760558590
+- cmd: llfldsajfdsajklfdsallslslfjdsafdsafasfjdklasdjklasdfasdfjkljklasdfjklasdfjlkasdf]
+  when: 1760558607
+- cmd: ]
+  when: 1760558609
+- cmd: ls
+  when: 1760561537
+- cmd: q
+  when: 1760561548
+- cmd: clear
+  when: 1760562104
+- cmd: ls
+  when: 1760562105
+- cmd: cdk
+  when: 1760562111
+- cmd: cd inland/mk47/keymaps/sean/
+  when: 1760562121
+  paths:
+    - inland/mk47/keymaps/sean/
+- cmd: ls
+  when: 1760562122
+- cmd: nvk
+  when: 1760562124
+- cmd: frc
+  when: 1760562274
+- cmd: ls
+  when: 1760562299
+- cmd: compile
+  when: 1760562302
+- cmd: clear
+  when: 1760562315
+- cmd: ls
+  when: 1760562315
+- cmd: frcv
+  when: 1760562317
+- cmd: frc
+  when: 1760562318
+- cmd: compile
+  when: 1760562333
+- cmd: frc
+  when: 1760562346
+- cmd: compile
+  when: 1760562380
+- cmd: cd
+  when: 1760562398
+- cmd: nvim .local/share/fish/fish_history
+  when: 1760562414
+  paths:
+    - .local/share/fish/fish_history

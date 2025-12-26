@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=ChatGPT
+Comment=ChatGPT web app via FirefoxPWA
+Exec=firefoxpwa site launch 01K7Q0JC4RHESFVCDR0S52EX28
+Terminal=false
+Categories=Network;Utility;
+Icon=applications-internet

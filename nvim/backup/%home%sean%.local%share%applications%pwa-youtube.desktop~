@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=YouTube
+Comment=YouTube web app via FirefoxPWA
+Exec=firefoxpwa site launch 01K7Q1RNNTY6EJ50142CF20TRZ
+Terminal=false
+Categories=AudioVideo;Video;Network;
+Icon=applications-multimedia

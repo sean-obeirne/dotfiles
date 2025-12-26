@@ -1,0 +1,39 @@
+# Application bindings
+$terminal = uwsm app -- $TERMINAL
+$browser = firefox
+
+bindd = SUPER, return, Terminal, exec, $terminal --working-directory="$(omarchy-cmd-terminal-cwd)"
+# bindd = SUPER, N, File manager, exec, uwsm app -- nautilus --new-window
+# bindd = SUPER, B, Browser, exec, omarchy-launch-or-focus $browser
+bindd = SUPER, F, Browser, exec, ~/bin/hypr-focus-or-launch firefox $browser
+bindd = SUPER SHIFT, F, Browser (private), exec, $browser --private
+bindd = SUPER SHIFT, S, Spotify, exec, omarchy-launch-or-focus spotify
+# bindd = SUPER, V, Code - OSS, exec, omarchy-launch-or-focus code
+bindd = SUPER, V, Code - OSS, exec, ~/bin/hypr-focus-or-launch code code
+bindd = SUPER, N, Editor, exec, omarchy-launch-editor
+bindd = SUPER, T, Activity, exec, $terminal --working-directory="$(omarchy-cmd-terminal-cwd)"
+bindd = SUPER, P, Projectarium TUI, exec, ~/bin/pj-tui-dark
+bindd = SUPER, R, OSRS, exec, flatpak run com.adamcake.Bolt
+bindd = SUPER, B, BambuLab, exec, flatpak run --env=GDK_SCALE=1 --env=GDK_DPI_SCALE=0.8 com.bambulab.BambuStudio
+# bindd = SUPER, D, Docker, exec, $terminal -e lazydocker
+# bindd = SUPER, G, Signal, exec, omarchy-launch-or-focus signal "uwsm app -- signal-desktop"
+# bindd = SUPER, O, Obsidian, exec, omarchy-launch-or-focus obsidian "uwsm app -- obsidian -disable-gpu --enable-wayland-ime"
+# bindd = SUPER, slash, Passwords, exec, uwsm app -- 1password
+
+# If your web app url contains #, type it as ## to prevent hyperland treat it as comments
+bindd = SUPER, C, ChatGPT, exec, uwsm app -- gtk-launch pwa-chatgpt
+bindd = SUPER, E, Gmail, exec, uwsm app -- gtk-launch pwa-gmail
+bindd = SUPER, Y, YouTube, exec, uwsm app -- gtk-launch pwa-youtube
+bindd = SUPER, M, YouTube Music, exec, uwsm app -- gtk-launch pwa-youtube-music
+bindd = SUPER, G, GitHub, exec, uwsm app -- gtk-launch pwa-github
+# bindd = SUPER, P, Perplexity, exec, uwsm app -- firefoxpwa site launch 01K9FM8202QMWNG0ZVAZWK9JQE
+# bindd = SUPER, C, Cursor, exec, uwsm app -- /home/sean/applications/Cursor-2.0.64-x86_64.AppImage
+# bindd = SUPER, C, Cursor, ex
+
+
+# Overwrite existing bindings, like putting Omarchy Menu on Super + Space
+# unbind = SUPER, SPACE
+# bindd = SUPER, SPACE, Omarchy menu, exec, omarchy-menu
+
+
+

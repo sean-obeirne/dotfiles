@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Terminal=false
+Name=Bolt
+GenericName=Bolt Launcher
+Comment=Third-party Jagex launcher
+Keywords=games;
+Exec=/usr/bin/flatpak run --branch=stable --arch=x86_64 --command=bolt com.adamcake.Bolt
+Icon=com.adamcake.Bolt
+Categories=Game;
+StartupWMClass=BoltLauncher
+X-Flatpak=com.adamcake.Bolt

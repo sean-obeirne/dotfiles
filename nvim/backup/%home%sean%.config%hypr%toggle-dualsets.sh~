@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# --- EDIT THESE: monitor names and their paired workspaces ---
+# Use: hyprctl monitors   to see monitor names (e.g., eDP-1, HDMI-A-1, DP-1)
+declare -A FG BG
+FG[DP-3]=2      # Foreground workspaces (set A)
+FG[DP-2]=1
+
+BG[DP-3]=3     # Background workspaces (set B)
+BG[DP-2]=4
+# -------------------------------------------------------------
+
+need() { command -v "$1" &>/dev/null || { echo "Missing dep: $1" >&2; exit 1; }; }
+need hyprctl
+need jq
+
+# Collect active (enabled) monitors
+mapfile -t MONS < <(hyprctl -j monitors | jq -r '.[] | select(.disabled==false) | .name')
+
+if ((${#MONS[@]}==0)); then
+  echo "No active monitors found." >&2
+  exit 1
+fi
+
+# Determine whether we're currently on FG or BG (or mixed)
+is_fg=true
+is_bg=true
+for m in "${MONS[@]}"; do
+  cur_ws="$(hyprctl -j monitors | jq -r ".[] | select(.name==\"$m\") | .activeWorkspace.id")"
+  fg_ws="${FG[$m]:-__unset__}"
+  bg_ws="${BG[$m]:-__unset__}"
+
+  # if a monitor isn't in the map, we won't try to change it
+  [[ "$fg_ws" != "$cur_ws" ]] && is_fg=false
+  [[ "$bg_ws" != "$cur_ws" ]] && is_bg=false
+done
+
+# Decide target set
+target="FG"
+[[ "$is_fg" == true && "$is_bg" != true ]] && target="BG"
+[[ "$is_bg" == true && "$is_fg" != true ]] && target="FG"
+
+# Switch both monitors to target set
+for m in "${MONS[@]}"; do
+  ws=""
+  if [[ "$target" == "FG" ]]; then
+    ws="${FG[$m]:-}"
+  else
+    ws="${BG[$m]:-}"
+  fi
+
+  # Skip monitors not defined in the map
+  [[ -z "$ws" ]] && continue
+
+  hyprctl dispatch focusmonitor "$m" >/dev/null
+  hyprctl dispatch workspace "$ws" >/dev/null
+done
+
+# Optional: desktop notification if available
+if command -v notify-send >/dev/null 2>&1; then
+  notify-send "Hyprland Toggle" "Switched to ${target} set"
+fi
+

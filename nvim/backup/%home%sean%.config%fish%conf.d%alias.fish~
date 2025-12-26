@@ -1,0 +1,123 @@
+# cd shortcuts
+alias cdp='cd ~/code/projectariums/'
+alias cdb='cd ~/code/macro-blues/zephyr/'
+alias cdm='cd ~/code/tfg/Mission-Uplink'
+alias tfg='cd ~/code/tfg'
+alias cdj='cd ~/code/godot/Wizards-of-the-Rift/'
+alias cdd='cd ~/applications/dwm'
+alias cdk='cd ~/code/moonlander/keyboards/zsa/moonlander/keymaps/sean/'
+alias cdpj='cd ~/code/projectariums/projectarium-v2/'
+alias cdn='cd ~/.config/hypr/'
+
+# nvim shortcuts
+alias vim='nvim'
+alias nvp='cd ~/code/macro-blues/macro-blues/; nvim macro-blues.ino'
+alias nvb='cd ~/code/tfg/dev-env/; nvim .' 
+alias nvm='cd ~/code/tfg/Mission-Uplink; nvim .'
+alias nvj='cd ~/code/godot/Wizards-of-the-Rift/; nvim .'
+alias cs='nvim ~/.findables'
+alias nvk='cd ~/code/qmk/keyboards/; nvim inland/mk47/keymaps/sean/keymap.c'
+
+# development shortcuts
+alias mb='make build'
+alias mr='make run'
+alias mt='make test'
+alias mf='make fmt'
+alias mc='make check'
+alias qf='cd /home/sean/code/moonlander/keyboards; qmk compile -kb zsa/moonlander -km sean; qmk flash -kb zsa/moonlander -km sean; cd /home/sean/code/moonlander/keyboards/zsa/moonlander/keymaps/sean'
+alias pjr='cd /home/sean/code/projectariums/projectarium-v2; docker compose up -d --build'
+
+# command shortcuts
+alias fif='find-in-file2'
+alias reboot='systemctl reboot'
+alias shutdown='systemctl poweroff'
+alias :q='exit'
+alias ul='unlink'
+alias df='df -h'
+alias q='exit'
+alias k='cat ~/code/qmk/keyboards/ferris/keymaps/sean-obeirne/keymap.c'
+alias kb='extract-keymap'
+alias bk='cd ~/code/qmk/keyboards/ferris/keymaps/sean-obeirne/; qmk compile -kb ferris/sweep -km sean-obeirne && qmk flash -kb ferris/sweep -km sean-obeirne'
+alias bk2='cd ~/code/qmk/keyboards/inland/mk47/keymaps/sean/; sudo qmk flash -kb inland/mk47 -km sean'
+alias rsdocs='cargo doc --open'
+alias flash='sudo qmk flash -kb inland/mk47 -km sean'
+alias compile='qmk compile -kb inland/mk47 -km sean'
+
+# sudo shortcuts
+alias fdisk='sudo fdisk'
+alias snvim='sudo -E nvim'
+
+# application shortcuts
+alias n='nvim .'
+alias unb='sudo ~/applications/unetbootin-linux64-702.bin'
+alias etch='~/applications/balenaEtcher-1.18.11-x64.AppImage'
+alias tor='cd /home/sean/applications/tor-browser/; ./start-tor-browser.desktop'
+alias post='/opt/Postman/Postman & disown'
+alias rp='cd ~/code/textwall/; python3 textwall.py m'
+alias diskspace='sudo ncdu /'
+alias vbox='su; virtualbox & disown'
+alias docs='evince /home/sean/code/macro-blues/bluefruit-nrf52-feather-learning-guide.pdf'
+alias ex='/home/sean/applications/exercism/exercism'
+alias cde='cd /home/sean/applications/exercism/'
+alias d='/home/sean/applications/Discord/Discord'
+
+# git shortcuts
+alias pul='git pull'
+alias pus='git push'
+alias com='git commit -m'
+alias gad='git add'
+alias gadall='git add *'
+alias gst='git status'
+alias gl='git log | less'
+alias gcm='git checkout master'
+alias dif='git diff'
+alias gch='git checkout'
+alias gmv='git mv'
+
+# config editors
+alias t='cd ~/applications/st/; nvim config.h; sudo make clean install'
+alias w='cd ~/applications/dwm/; nvim config.h; sudo make clean install'
+alias irc='nvim ~/.config/i3/config'
+alias arc='nvim ~/.config/alacritty/alacritty.toml'
+alias frc='nvim ~/.config/fish/conf.d/alias.fish; source ~/.config/fish/config.fish'
+alias prc='nvim ~/.config/picom.conf'
+alias brc='nvim ~/.bashrc'
+alias nrc='cd ~/.config/nvim; nvim ./init.lua'
+alias drc='cd ~/applications/dwm; nvim config.h'
+alias cdn='cd ~/.config/nvim'
+alias cdnp='cd ~/.config/nvim/lua/plugins/'
+alias vrc='nvim ~/.vim/vimrc'
+alias cdconf='cd ~/Documents/configs/tinkerhub'
+alias cdbin='cd ~/bin'
+alias cdscripts='cd ~/scripts'
+alias nva='cd ~/applications; nvim .'
+alias kernel='cd /usr/src/linux/; sudo make menuconfig && sudo make; sudo make modules_install; sudo make install; cd ~'
+alias puse='sudo nvim /etc/portage/package.use'
+alias mk='sudo nvim /etc/portage/make.conf'
+alias hrc='cd /home/sean/.config/hypr; nvim .; hyprctl reload'
+alias hr='hyprctl reload'
+alias orc='cd /home/sean/.local/share/omarchy/bin/; nvim .'
+
+# package manager
+alias ins='sudo dnf install'
+alias uins='sudo dnf remove'
+# alias aur='sudo dnf autoremove'
+alias uu='sudo dnf upgrade; flatpak update'
+# alias hist='sudo dnf history list | tac | head -n -2'
+
+# old shortcuts
+# alias r='clear; ./textwall.py m; cat textwall.log'
+# alias l='cat ~/code/textwall/textwall.log | nl | grep -i'
+# alias cdpa='cd ~/code/playbook; bash'
+# alias vno='vim ~/code/playbook/notes'
+# alias vti='vim ~/code/playbook/ticket-notes'
+# alias cdmn='cd ~/code/tfg/new-era'
+# alias cdc='cd ~/classes'
+# alias vpd='vim ~/code/tfg/personal-deployment-notes'
+# alias nvp1='cd ~/code/lua-practice/todua; nvim .'
+# alias nws='cd ~/.config/nvim/lua/plugins; nvim my_custom_dashboard.lua'
+# alias nvmn='cd ~/code/tfg/new-era; nvim notes'
+
+# Created by `pipx` on 2024-12-08 14:54:41
+set PATH $PATH /home/sean/.local/bin
+

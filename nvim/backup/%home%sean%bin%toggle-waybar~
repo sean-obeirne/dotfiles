@@ -1,0 +1,19 @@
+# ~/.local/bin/toggle-waybar
+#!/usr/bin/env bash
+set -euo pipefail
+
+have_unit() { systemctl --user list-unit-files 2>/dev/null | grep -q '^waybar\.service'; }
+is_active() { systemctl --user is-active --quiet waybar.service; }
+
+launch() {
+  if command -v uwsm >/dev/null 2>&1; then nohup uwsm app -- waybar >/dev/null 2>&1 &
+  else nohup waybar >/dev/null 2>&1 & fi
+}
+
+if have_unit; then
+  if is_active; then systemctl --user stop waybar
+  else systemctl --user start waybar; fi
+else
+  if pgrep -x waybar >/dev/null; then pkill -x waybar
+  else launch; fi
+fi

@@ -1,0 +1,515 @@
+use std::env;
+use std::fs;
+use std::io;
+use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
+use std::time::{Duration, Instant};
+
+use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers};
+use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
+use crossterm::{execute, terminal};
+use ratatui::backend::CrosstermBackend;
+use ratatui::layout::{Alignment, Constraint, Direction, Layout, Rect};
+use ratatui::style::{Color, Modifier, Style};
+use ratatui::text::{Line, Span};
+use ratatui::widgets::{Block, Borders, Clear, List, ListItem, ListState, Paragraph, Wrap};
+use ratatui::Terminal;
+
+const DEFAULT_ROOT: &str = "/home/sean/code";
+
+#[derive(Clone)]
+struct Project {
+    name: String,
+    path: PathBuf,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+enum Mode {
+    Projects,
+    Actions,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+enum ActionKind {
+    VSCode,
+    NvimInAlacritty,
+    AlacrittyShell,
+}
+
+struct App {
+    root: PathBuf,
+    mode: Mode,
+
+    // Projects
+    all_projects: Vec<Project>,
+    filtered_idx: Vec<usize>,
+    proj_state: ListState,
+    filter: String,
+
+    // Actions popup
+    actions: Vec<ActionKind>,
+    action_state: ListState,
+
+    // Status line
+    status: String,
+    status_set: Instant,
+}
+
+impl App {
+    fn new(root: PathBuf) -> Self {
+        let mut app = Self {
+            root,
+            mode: Mode::Projects,
+            all_projects: vec![],
+            filtered_idx: vec![],
+            proj_state: ListState::default(),
+            filter: String::new(),
+            actions: vec![
+                ActionKind::VSCode,
+                ActionKind::NvimInAlacritty,
+                ActionKind::AlacrittyShell,
+            ],
+            action_state: ListState::default(),
+            status: String::new(),
+            status_set: Instant::now(),
+        };
+        app.rescan();
+        app
+    }
+
+    fn rescan(&mut self) {
+        self.all_projects = scan_projects(&self.root);
+        self.apply_filter();
+        if self.filtered_len() > 0 {
+            self.proj_state.select(Some(0));
+        } else {
+            self.proj_state.select(None);
+        }
+        self.flash("Rescanned.");
+    }
+
+    fn filtered_len(&self) -> usize {
+        self.filtered_idx.len()
+    }
+
+    fn selected_project(&self) -> Option<&Project> {
+        let Some(sel) = self.proj_state.selected() else { return None; };
+        let idx = *self.filtered_idx.get(sel)?;
+        self.all_projects.get(idx)
+    }
+
+    fn apply_filter(&mut self) {
+        if self.filter.trim().is_empty() {
+            self.filtered_idx = (0..self.all_projects.len()).collect();
+        } else {
+            let q = self.filter.to_lowercase();
+            self.filtered_idx = self
+                .all_projects
+                .iter()
+                .enumerate()
+                .filter(|(_, p)| {
+                    p.name.to_lowercase().contains(&q) || p.path.to_string_lossy().to_lowercase().contains(&q)
+                })
+                .map(|(i, _)| i)
+                .collect();
+        }
+        // Clamp selection
+        if self.filtered_len() == 0 {
+            self.proj_state.select(None);
+        } else {
+            let sel = self.proj_state.selected().unwrap_or(0).min(self.filtered_len() - 1);
+            self.proj_state.select(Some(sel));
+        }
+    }
+
+    fn move_selection(&mut self, delta: isize) {
+        if self.filtered_len() == 0 {
+            self.proj_state.select(None);
+            return;
+        }
+        let cur = self.proj_state.selected().unwrap_or(0) as isize;
+        let len = self.filtered_len() as isize;
+        let mut next = cur + delta;
+        if next < 0 {
+            next = 0;
+        }
+        if next >= len {
+            next = len - 1;
+        }
+        self.proj_state.select(Some(next as usize));
+    }
+
+    fn open_actions(&mut self) {
+        if self.selected_project().is_none() {
+            return;
+        }
+        self.mode = Mode::Actions;
+        self.action_state.select(Some(0));
+    }
+
+    fn close_actions(&mut self) {
+        self.mode = Mode::Projects;
+    }
+
+    fn launch_selected(&mut self) {
+        let Some(project) = self.selected_project().cloned() else {
+            self.flash_err("No project selected.");
+            self.close_actions();
+            return;
+        };
+        let Some(ai) = self.action_state.selected() else {
+            self.close_actions();
+            return;
+        };
+        let kind = self.actions[ai];
+        match spawn_action(kind, &project.path) {
+            Ok(()) => match kind {
+                ActionKind::VSCode => self.flash(&format!("Launched VS Code → {}", project.name)),
+                ActionKind::NvimInAlacritty => {
+                    self.flash(&format!("Launched Alacritty + Neovim → {}", project.name))
+                }
+                ActionKind::AlacrittyShell => {
+                    self.flash(&format!("Launched Alacritty → {}", project.name))
+                }
+            },
+            Err(e) => self.flash_err(&e),
+        }
+        self.close_actions();
+    }
+
+    fn flash(&mut self, msg: &str) {
+        self.status = msg.to_string();
+        self.status_set = Instant::now();
+    }
+    fn flash_err(&mut self, msg: &str) {
+        self.status = format!("Error: {}", msg);
+        self.status_set = Instant::now();
+    }
+
+    fn maybe_clear_status(&mut self) {
+        if !self.status.is_empty() && self.status_set.elapsed() > Duration::from_secs(3) {
+            self.status.clear();
+        }
+    }
+}
+
+fn main() -> io::Result<()> {
+    // Root path
+    let root = env::var("PROJECTS_DIR").unwrap_or_else(|_| DEFAULT_ROOT.to_string());
+    if !Path::new(&root).exists() {
+        eprintln!("Directory does not exist: {}", root);
+        std::process::exit(1);
+    }
+
+    // Terminal setup
+    enable_raw_mode()?;
+    let mut stdout = io::stdout();
+    execute!(stdout, terminal::EnterAlternateScreen, crossterm::cursor::Hide)?;
+    terminal::enable_raw_mode()?;
+    let backend = CrosstermBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
+    terminal.clear()?;
+
+    let mut app = App::new(PathBuf::from(root));
+
+    let tick_rate = Duration::from_millis(100);
+
+    loop {
+        terminal.draw(|f| ui(f, &mut app))?;
+
+        // non-blocking poll with tick
+        if event::poll(tick_rate)? {
+            if let Event::Key(key) = event::read()? {
+                if handle_key(&mut app, key) {
+                    break; // true means quit
+                }
+            }
+        }
+        app.maybe_clear_status();
+    }
+
+    // Restore terminal
+    disable_raw_mode()?;
+    let mut out = io::stdout();
+    execute!(out, terminal::LeaveAlternateScreen, crossterm::cursor::Show)?;
+    Ok(())
+}
+
+fn handle_key(app: &mut App, key: KeyEvent) -> bool {
+    match app.mode {
+        Mode::Projects => match key.code {
+            KeyCode::Char('q') if key.modifiers.is_empty() => return true,
+            KeyCode::Esc => {
+                // clear filter
+                app.filter.clear();
+                app.apply_filter();
+            }
+            KeyCode::Char('/') => {
+                app.filter.clear();
+                app.apply_filter();
+            }
+            KeyCode::Char('r') => app.rescan(),
+            KeyCode::Down | KeyCode::Char('j') => app.move_selection(1),
+            KeyCode::Up | KeyCode::Char('k') => app.move_selection(-1),
+            KeyCode::PageDown => app.move_selection(10),
+            KeyCode::PageUp => app.move_selection(-10),
+            KeyCode::Enter => app.open_actions(),
+            KeyCode::Char(c) => {
+                // type-to-filter (ignore ctrl/alt/meta)
+                if key.modifiers == KeyModifiers::NONE && !c.is_control() {
+                    app.filter.push(c);
+                    app.apply_filter();
+                }
+            }
+            KeyCode::Backspace => {
+                app.filter.pop();
+                app.apply_filter();
+            }
+            _ => {}
+        },
+        Mode::Actions => match key.code {
+            KeyCode::Esc | KeyCode::Char('q') => app.close_actions(),
+            KeyCode::Up | KeyCode::Char('k') => {
+                let sel = app.action_state.selected().unwrap_or(0);
+                let next = sel.saturating_sub(1);
+                app.action_state.select(Some(next));
+            }
+            KeyCode::Down | KeyCode::Char('j') => {
+                let sel = app.action_state.selected().unwrap_or(0);
+                let next = (sel + 1).min(app.actions.len() - 1);
+                app.action_state.select(Some(next));
+            }
+            KeyCode::Enter => app.launch_selected(),
+            _ => {}
+        },
+    }
+    false
+}
+
+fn ui(f: &mut Frame<'_>, app: &mut App) {
+    // Root layout: header, body, footer
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            Constraint::Length(3),
+            Constraint::Min(5),
+            Constraint::Length(2),
+        ])
+        .split(f.size());
+
+    // Header
+    let title = Line::from(vec![
+        Span::styled("Project Launcher — ", Style::default().add_modifier(Modifier::BOLD)),
+        Span::raw(app.root.to_string_lossy()),
+    ]);
+    let help = Line::from(Span::styled(
+        "↑/↓/j/k move • PgUp/PgDn page • type to filter • / or Esc clears • Enter choose • r rescan • q quit",
+        Style::default().fg(Color::Gray),
+    ));
+    let header = Paragraph::new(vec![title, help]).alignment(Alignment::Left);
+    f.render_widget(header, chunks[0]);
+
+    // Body: left single panel with list
+    let body_area = chunks[1];
+    let block = Block::default().borders(Borders::ALL).title("Projects");
+    let list_items: Vec<ListItem> = if app.filtered_len() == 0 {
+        vec![ListItem::new(Line::from(Span::styled(
+            if app.filter.is_empty() { "(No projects found)" } else { "(No matches)" },
+            Style::default().fg(Color::Gray),
+        )))]
+    } else {
+        app.filtered_idx
+            .iter()
+            .filter_map(|&i| app.all_projects.get(i))
+            .map(|p| {
+                ListItem::new(vec![
+                    Line::from(Span::styled(&p.name, Style::default().add_modifier(Modifier::BOLD))),
+                    Line::from(Span::styled(
+                        p.path.to_string_lossy(),
+                        Style::default().fg(Color::Gray),
+                    )),
+                ])
+            })
+            .collect()
+    };
+
+    let projects_list = List::new(list_items)
+        .block(block)
+        .highlight_style(
+            Style::default()
+                .add_modifier(Modifier::REVERSED | Modifier::BOLD),
+        )
+        .highlight_symbol("▶ ");
+
+    f.render_stateful_widget(projects_list, body_area, &mut app.proj_state);
+
+    // Filter line (shows current query)
+    let filter_line = Paragraph::new(Line::from(vec![
+        Span::styled("Filter: ", Style::default().add_modifier(Modifier::BOLD)),
+        Span::raw(&app.filter),
+    ]))
+    .wrap(Wrap { trim: true });
+    let filter_area = Rect {
+        x: body_area.x + 1,
+        y: body_area.y + body_area.height.saturating_sub(2),
+        width: body_area.width.saturating_sub(2),
+        height: 1,
+    };
+    f.render_widget(filter_line, filter_area);
+
+    // Footer / status
+    let status_style = if app.status.starts_with("Error:") {
+        Style::default().fg(Color::Red)
+    } else {
+        Style::default().fg(Color::Green)
+    };
+    let status = Paragraph::new(Span::styled(app.status.clone(), status_style));
+    f.render_widget(status, chunks[2]);
+
+    // Actions popup overlay
+    if app.mode == Mode::Actions {
+        let area = centered_rect(60, 35, f.size());
+        // Clear draws the popup over existing content (no solid bg color specified)
+        f.render_widget(Clear, area);
+        let title = "Open with…";
+        let block = Block::default().borders(Borders::ALL).title(title);
+        let items: Vec<ListItem> = app
+            .actions
+            .iter()
+            .map(|a| ListItem::new(action_label(*a)))
+            .collect();
+
+        let list = List::new(items).block(block).highlight_style(
+            Style::default()
+                .add_modifier(Modifier::REVERSED | Modifier::BOLD),
+        );
+        f.render_stateful_widget(list, area, &mut app.action_state);
+    }
+}
+
+fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
+    let popup_layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Percentage((100 - percent_y) / 2),
+                Constraint::Percentage(percent_y),
+                Constraint::Percentage((100 - percent_y) / 2),
+            ]
+            .as_ref(),
+        )
+        .split(r);
+
+    let horizontal = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(
+            [
+                Constraint::Percentage((100 - percent_x) / 2),
+                Constraint::Percentage(percent_x),
+                Constraint::Percentage((100 - percent_x) / 2),
+            ]
+            .as_ref(),
+        )
+        .split(popup_layout[1]);
+
+    horizontal[1]
+}
+
+fn action_label(a: ActionKind) -> Line<'static> {
+    match a {
+        ActionKind::VSCode => Line::from("VS Code"),
+        ActionKind::NvimInAlacritty => Line::from("Neovim (in Alacritty)"),
+        ActionKind::AlacrittyShell => Line::from("Alacritty (shell)"),
+    }
+}
+
+fn scan_projects(root: &Path) -> Vec<Project> {
+    let mut out = Vec::new();
+    if let Ok(entries) = fs::read_dir(root) {
+        for e in entries.flatten() {
+            let path = e.path();
+            if path.is_dir() {
+                if let Some(name) = path.file_name().and_then(|s| s.to_str()) {
+                    out.push(Project {
+                        name: name.to_string(),
+                        path,
+                    });
+                }
+            }
+        }
+    }
+    out.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+    out
+}
+
+// ---------- Spawning external commands ----------
+
+fn spawn_action(kind: ActionKind, project_path: &Path) -> Result<(), String> {
+    match kind {
+        ActionKind::VSCode => {
+            let code = first_existing(&["code", "code-oss"]).ok_or_else(|| {
+                "VS Code not found (need 'code' or 'code-oss' in PATH)".to_string()
+            })?;
+            start_detached(Command::new(code).arg(project_path))?;
+        }
+        ActionKind::NvimInAlacritty => {
+            let term = which("alacritty").ok_or_else(|| "Alacritty not found".to_string())?;
+            let nvim = which("nvim").ok_or_else(|| "Neovim not found".to_string())?;
+            start_detached(
+                Command::new(term)
+                    .arg("--working-directory")
+                    .arg(project_path)
+                    .arg("-e")
+                    .arg(nvim),
+            )?;
+        }
+        ActionKind::AlacrittyShell => {
+            let term = which("alacritty").ok_or_else(|| "Alacritty not found".to_string())?;
+            start_detached(Command::new(term).arg("--working-directory").arg(project_path))?;
+        }
+    }
+    Ok(())
+}
+
+fn which(bin: &str) -> Option<PathBuf> {
+    env::var_os("PATH").and_then(|paths| {
+        env::split_paths(&paths).find_map(|p| {
+            let candidate = p.join(bin);
+            if candidate.is_file() && is_executable(&candidate) {
+                Some(candidate)
+            } else {
+                None
+            }
+        })
+    })
+}
+
+fn first_existing(bins: &[&str]) -> Option<PathBuf> {
+    for b in bins {
+        if let Some(p) = which(b) {
+            return Some(p);
+        }
+    }
+    None
+}
+
+#[cfg(unix)]
+fn is_executable(path: &Path) -> bool {
+    use std::os::unix::fs::PermissionsExt;
+    fs::metadata(path)
+        .map(|m| m.permissions().mode() & 0o111 != 0)
+        .unwrap_or(false)
+}
+
+#[cfg(not(unix))]
+fn is_executable(path: &Path) -> bool {
+    path.is_file()
+}
+
+fn start_detached(cmd: &mut Command) -> Result<(), String> {
+    cmd.stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .stdin(Stdio::null());
+    cmd.spawn().map(|_| ()).map_err(|e| e.to_string())
+}
+

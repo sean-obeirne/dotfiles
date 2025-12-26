@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# webapp: open a minimal Firefox window (distinct class) under XWayland
+set -euo pipefail
+
+url="${1:?Usage: webapp <URL>}"
+
+exec env MOZ_ENABLE_WAYLAND=0 firefox \
+  --no-remote \
+  --new-window "$url" \
+  --class WebAppFirefox \
+  --width 1280 \
+  --height 800

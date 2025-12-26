@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Usage: omarchy-launch-webapp <URL>
+
+set -euo pipefail
+
+if [ $# -eq 0 ]; then
+  echo "Usage: omarchy-launch-webapp <URL>"
+  exit 1
+fi
+
+url="$1"
+
+# 🚀 Launch Firefox as a standalone "webapp"-like window
+# - no-remote: ensures this opens even if Firefox is already running
+# - width/height: gives Hyprland size hints (so it won't fullscreen)
+# - new-instance: isolates the process slightly
+# - private-window: optional (remove if you want cookies)
+exec firefox \
+  --no-remote \
+  --new-instance \
+  --width 1280 \
+  --height 800 \
+  --private-window \
+  "$url"
+

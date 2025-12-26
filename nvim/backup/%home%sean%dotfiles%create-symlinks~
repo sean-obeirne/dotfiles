@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# author:	Sean O'Beirne
+# file:		create-symlinks
+
+# usage: create-symlinks 
+
+# for all files in this branch, replace all existing config files with symlinks
+# to this repo's config files
+
+################################################################################

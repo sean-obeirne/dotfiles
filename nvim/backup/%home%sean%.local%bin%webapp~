@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ -z "${1:-}" ]; then
+  echo "Usage: webapp <URL>"
+  exit 1
+fi
+
+url="$1"
+
+exec firefox-webapp --new-window --no-remote --kiosk https://chatgpt.com

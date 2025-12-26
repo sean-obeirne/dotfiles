@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=GitHub
+Comment=GitHub web app via FirefoxPWA
+Exec=firefoxpwa site launch 01K7Q1P421KDM9HG39J9CPZRQJ
+Terminal=false
+Categories=Development;Network;
+Icon=GitHub.png

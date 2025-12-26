@@ -1,0 +1,236 @@
+/* Copyright 2020 ZSA Technology Labs, Inc <@zsa>
+ * Copyright 2020 Jack Humbert <jack.humb@gmail.com>
+ * Copyright 2020 Christopher Courtney, aka Drashna Jael're  (@drashna) <drashna@live.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include QMK_KEYBOARD_H
+#include "version.h"
+
+// Macro for Shift+LGUI combinations (for moving windows to workspaces)
+
+enum layers {
+    BASE,   // default layer
+    RS,     // utility layer (stays the same)
+    LAUNCH, // launch layer (launch applications)
+};
+
+enum custom_keycodes {
+    VRSN = SAFE_RANGE,
+    LED_LEVEL,
+    TOGGLE_LAYER_COLOR,
+};
+
+// clang-format off
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+    [BASE] = LAYOUT(
+        KC_GRV,  KC_1   , KC_2   , KC_3    , KC_4    , KC_5   , KC_EQL    ,     KC_BSLS    , KC_6   , KC_7   , KC_8   , KC_9   , KC_0   , KC_MINS,
+        KC_TAB,  KC_Q   , KC_W   , KC_E    , KC_R    , KC_T   , KC_LPRN   ,     KC_LBRC    , KC_Y   , KC_U   , KC_I   , KC_O   , KC_P   , KC_QUOT,
+        KC_ESC,  KC_A   , KC_S   , KC_D    , KC_F    , KC_G   , KC_RPRN   ,     KC_RBRC    , KC_H   , KC_J   , KC_K   , KC_L   , KC_SCLN, KC_ENT ,
+        KC_LSFT, KC_Z   , KC_X   , KC_C    , KC_V    , KC_B   ,                              KC_N   , KC_M   , KC_COMM, KC_DOT , KC_SLSH, KC_RSFT,
+        KC_LCTL, _______, _______, _______, KC_SPC  ,          TG(RS)     ,     OSL(LAUNCH),          KC_BSPC, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT,
+                                            KC_SPC  , KC_LGUI, OSL(LAUNCH),     LGUI(KC_F) , KC_LALT, KC_ENT
+    ),
+
+    [LAUNCH] = LAYOUT(
+        _______, _______   , _______, _______   , _______   , _______   , _______ ,        _______, _______   , _______   , _______, _______, _______   , _______     ,
+        _______, LGUI(KC_W), _______, LGUI(KC_E), LGUI(KC_R), LGUI(KC_T), _______ ,        _______, LGUI(KC_Y), _______   , _______, _______, LGUI(KC_P), _______     ,
+        _______, _______   , LGUI(KC_S), _______, LGUI(KC_F), LGUI(KC_G), _______ ,        _______, _______   , _______   , _______, _______, _______   , LGUI(KC_ENT),
+        _______, _______   , _______, LGUI(KC_C), LGUI(KC_V), LGUI(KC_B),                           LGUI(KC_N), LGUI(KC_M), _______, _______, _______   , _______     ,
+        _______, _______   , _______, _______   , _______   ,             TO(BASE),        _______,             _______   , _______, _______, _______   , QK_BOOT     ,
+                                                  _______   , _______   , _______ ,        _______, _______   , _______
+    ),
+
+    [RS] = LAYOUT(
+        KC_GRV , _______, _______, _______, _______, _______,  _______,        _______    , _______ , _______, _______, _______, _______, _______,
+        KC_L   , KC_1   , KC_2   , KC_3   , KC_4   , KC_5   ,  _______,        _______    , KC_6    , KC_7   , KC_8   , KC_9   , KC_B   , _______,
+        KC_ESC , KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_LSFT,  KC_LALT,        _______    , TO(BASE), KC_4   , KC_5   , KC_6   , KC_C   , _______,
+        KC_C   , KC_F5  , KC_F6  , KC_F7  , KC_F8  , KC_F10 ,                               MS_BTN1 , KC_1   , KC_2   , KC_3   , _______, _______,
+        _______, _______, _______, _______, KC_LCTL,          TO(BASE),        OSL(LAUNCH),           KC_0   , KC_0   , KC_5   , KC_1   ,    KC_6,
+                                            KC_SPC , _______,  _______,        _______    , _______ , KC_BSPC
+    ),
+};
+
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        switch (keycode) {
+        case VRSN:
+            SEND_STRING (QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
+            return false;
+        }
+    }
+    return true;
+}
+
+#ifndef RGB_MATRIX_ENABLE
+#define RGB_MATRIX_ENABLE
+#endif
+
+#ifdef RGB_MATRIX_ENABLE
+// Define colors as RGB values
+typedef struct {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+} rgb_color_t;
+
+// Custom color definitions for LED mapping
+#define AQUA_   (rgb_color_t){100, 255, 255}
+#define BLUE_   (rgb_color_t){0, 0, 255}
+#define CYAN_   (rgb_color_t){0, 255, 255}
+#define D_BLU   (rgb_color_t){0, 0, 100}
+#define D_GRN   (rgb_color_t){0, 50, 0}
+#define D_GRY   (rgb_color_t){20, 20, 20}
+#define D_RED   (rgb_color_t){100, 0, 0}
+#define GOLD_   (rgb_color_t){255, 200, 0}
+#define GRAY_   (rgb_color_t){64, 64, 64}
+#define GREEN   (rgb_color_t){0, 255, 0}
+#define LIME_   (rgb_color_t){100, 255, 100}
+#define OFF__   (rgb_color_t){0, 0, 0}
+#define ORNG_   (rgb_color_t){255, 165, 0}
+#define PINK_   (rgb_color_t){255, 100, 180}
+#define PURPL   (rgb_color_t){50, 0, 255}
+#define RED__   (rgb_color_t){255, 0, 0}
+#define SLMON   (rgb_color_t){255, 150, 100}
+#define TEAL_   (rgb_color_t){0, 200, 200}
+#define VDRED   (rgb_color_t){25, 0, 0}
+#define VIOLA   (rgb_color_t){160, 32, 240}
+#define WHITE   (rgb_color_t){250, 250, 250}
+#define YELLW   (rgb_color_t){255, 255, 0}
+
+// LED color mapping: {led_index, color}
+typedef struct {
+    uint8_t index;
+    rgb_color_t color;
+} led_color_map_t;
+
+// LED Position Map - Organized by physical layout (row, column)
+// Use this to easily set LEDs for specific keys on different layers
+//
+// LEFT SIDE:                                        RIGHT SIDE:
+//
+//  0     5    10    15    20    25    29              65    61    56    51    46    42    36
+//  1     6    11    16    21    26    30              66    62    57    52    47    41    37
+//  2     7    12    17    22    27    31              67    63    58    53    48    43    38
+//  3     8    13    18    23    28    --              --    64    59    54    49    44    39
+//  4     9    14    19    24    --    --   35    71   --    --    60    55    50    45    40
+//                               32    33   34    68   69    70
+//
+// Left Thumb Cluster: 32 (left), 33 (middle), 34 (right), 35 (top)
+// Right Thumb Cluster: 68 (left), 69 (middle), 70 (right), 71 (top)
+
+// Helper function to set LEDs from a color map
+void set_layer_leds(const led_color_map_t* map, uint8_t map_size, rgb_color_t default_color) {
+    // Set all LEDs to default color first
+    for (uint8_t i = 0; i < 72; i++) {
+        rgb_matrix_set_color(i, default_color.r, default_color.g, default_color.b);
+    }
+    // Apply the color map
+    for (uint8_t i = 0; i < map_size; i++) {
+        rgb_matrix_set_color(map[i].index, map[i].color.r, map[i].color.g, map[i].color.b);
+    }
+}
+
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    // Get current layer state - prioritize LAUNCH if active
+    uint8_t layer;
+    if (IS_LAYER_ON(LAUNCH)) {
+        layer = LAUNCH;
+    } else {
+        layer = get_highest_layer(layer_state | default_layer_state);
+    }
+
+    // Don't modify LEDs on BASE layer
+    if (layer == BASE) {
+        return false;
+    }
+
+    // LED position mapping - shared across all layers
+    const uint8_t led_positions[6][14] = {
+        { 0,    5,   10,   15,   20,   25,   29,            65,    61,   56,   51,   46,   41,   36},  // Row 1
+        { 1,    6,   11,   16,   21,   26,   30,            66,    62,   57,   52,   47,   42,   37},  // Row 2
+        { 2,    7,   12,   17,   22,   27,   31,            67,    63,   58,   53,   48,   43,   38},  // Row 3
+        { 3,    8,   13,   18,   23,   28,   255,           255,   64,   59,   54,   49,   44,   39},  // Row 4 (255 = no LED)
+        { 4,    9,   14,   19,   24,   255,  255,           255,  255,   60,   55,   50,   45,   40},  // Row 5 (255 = no LED)
+        {255,  255,  255,   32,   33,   34,   35,           71,    70,   69,   68,  255,  255,  255}   // Thumb row
+    };
+
+    const rgb_color_t rgb_maps[][6][14] = {
+        [BASE] = {
+            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
+        },
+        [LAUNCH] = {
+            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, CYAN_, OFF__, YELLW, RED__, PURPL, OFF__,       OFF__, WHITE, OFF__, OFF__, OFF__, WHITE, OFF__},
+            {OFF__, OFF__, GREEN, OFF__, ORNG_, GRAY_, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, PURPL},
+            {OFF__, OFF__, OFF__, D_GRN, BLUE_, GRN__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, WHITE},
+            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       GRAY_, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
+        },
+        [RS] = {
+            {PURPL, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {VDRED, VDRED, VDRED, VDRED, VDRED, VDRED, OFF__,       OFF__, OFF__, VDRED, VDRED, VDRED, OFF__, OFF__},
+            {RED__, PURPL, PURPL, PURPL, PURPL, BLUE_, BLUE_,       OFF__, WHITE, VDRED, VDRED, VDRED, OFF__, OFF__},
+            {VDRED, PURPL, PURPL, PURPL, PURPL, PURPL, OFF__,       OFF__, OFF__, VDRED, VDRED, VDRED, OFF__, OFF__},
+            {OFF__, OFF__, OFF__, OFF__, BLUE_, OFF__, OFF__,       OFF__, OFF__, VDRED, D_GRN, D_GRN, D_GRN, D_GRN},
+            {OFF__, OFF__, OFF__, D_RED, OFF__, GREEN, GRAY_,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
+        }
+    };
+
+    // Apply the colors from rgb_maps[layer]
+    for (uint8_t row = 0; row < 6; row++) {
+        for (uint8_t col = 0; col < 14; col++) {
+            uint8_t led = led_positions[row][col];
+            if (led != 255) {  // Skip empty positions
+                rgb_color_t color = rgb_maps[layer][row][col];
+                rgb_matrix_set_color(led, color.r, color.g, color.b);
+            }
+        }
+    }
+
+    return true;  // Return true to suppress background RGB effects
+}
+#endif // RGB_MATRIX_ENABLE
+
+
+
+
+// TEMPLATES:
+// const rgb_color_t led_layout[6][14] = {
+//     // LEFT SIDE                                                                        RIGHT SIDE
+//     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},  // Row 1
+//     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},  // Row 2
+//     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},  // Row 3
+//     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},  // Row 4
+//     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},  // Row 5
+//     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}   // Thumb row
+// };
+
+// Apply the colors
+// for (uint8_t row = 0; row < 6; row++) {
+//     for (uint8_t col = 0; col < 14; col++) {
+//         uint8_t led = led_positions[row][col];
+//         if (led != 255) {  // Skip empty positions
+//             rgb_color_t color = led_layout[row][col];
+//             rgb_matrix_set_color(led, color.r, color.g, color.b);
+//         }
+//     }
+// }

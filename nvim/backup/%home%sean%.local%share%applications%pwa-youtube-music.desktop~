@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=YouTube Music
+Comment=YouTube Music web app via FirefoxPWA
+Exec=firefoxpwa site launch 01K7Q1KF27MSN1KADN9KGF1H5A
+Terminal=false
+Categories=AudioVideo;Music;Network;
+Icon=Youtube_Music_icon.svg

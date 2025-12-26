@@ -1,0 +1,40 @@
+tickets completed:
+
+
+ecsmanifest deployments
+good:
+    i asked for help at every corner
+bad:
+    no knowledge sharing beforehand
+    working on CE is just generally so confusing
+    no substantial help was given until whole team was present
+        this is one thing i learned, swarming is definitely a good thing when unsure about something
+SO I THINK I MADE THE GODDAMN BEST OUT OF IT
+
+upload evidence PRE-CHANGE
+    lambda creation
+    aws kms
+upload evidence POST-CHANGE
+    sast upload
+    sod upload - synthesized lastcommitter
+    polishing - this has been forever helpful
+    in-toto
+
+hackathon
+rego code creation
+    learning rego
+
+
+It's been six months since I joined the DevOps Solutions team, and as I will dicuss here, I loved every moment of it!
+
+Here are some of my most proud moments and accomplishments I've had since I started here in April. I will go in chronological order so that I can show growth over time.
+- My first major assignment was to fix several demo pipelines in CE4. This proved to be quite an undertaking, as these were AWS deployments that were defined in CE4, two technologies I had little to no experience in. During this time I eventually developed the feel for CE, and I encountered its limitations and annoying quirks (i.e. the branching methodology...). I quickly picked up and learned several AWS services, including ECS, EC2, ECR, CloudFormation, and IAM among others. This took a very significant part of my first 6 months, not necessarily because I was new, but because very few members on the team could help me with the particular pieces that were breaking in the deployments. I only mention this to say, as much as it was a difficult and long process, I feel I did well in reaching out often, and finally when we swarmed about it as a team, we made real progress that aided in the eventual completion of the tickets.
+- That out of the way, I very thankfully bid farewell to CE and I began working on an important piece of PruPath, artifact evidence. I was assigned with interfacing with a ci-consumer TF module I helped build to construct an AWS evidence collection lambda. This took some time (although much less than my previous assignment), before it was tragically binned in order to pursue JFrog's built in evidence CLI functions. While I was sad to see my work replaced, I could not at the time argue the point that the new solution would be in some ways better than what I had built. I mention this to emphasize my flexibility and adaptability, as, I didn't just stop there. After we saw the POC and the decision seemed clear I very quickly delved into the JFrog evidence docs to make sure I could still spearhead that operation, which I indeed do.
+- From here I added several features to the original JFrog CLI POC, including SOD evidence, and in-toto attestation compliance. I structured the evidence data, down to a tee, to reflect this open source schema for advantages like signing and easy to read evidence output.
+- I've now also been a major player in establishing how our Governance Gate v2 will look. I have not only done a hackathon project to learn rego, but I have implemented it myself, and most importantly, I am often leading or directly contributing to our architecture diagrams. Hours of discussion inform what we do and what my opinions are, and I am very proud with my contribution in this effort.
+- As this went on, I started to become somewhat of an expert on what JFrog has for evidence features, and more importantly I became a local expert on our evidence in general. Teammates (even seniors), ask for me to clarify, explain, or demonstrate the evidence process, because I was the one who built it. Not only did I become an expert on what we already do, but I am now one of the few in DevOps to be in on the AppTrust POC, where I think I have asked good questions and given good feedback and opinions.
+
+I am excited, *very* excited, to see where the rest of my Prudential journey takes me. I love what we do and I'm passionate about the product we are making. As a side note, could not wish for a better group of people to work with!
+
+Thank you very much,
+Sean

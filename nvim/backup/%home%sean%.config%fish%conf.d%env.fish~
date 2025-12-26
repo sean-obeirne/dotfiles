@@ -1,0 +1,5 @@
+set -Ux EDITOR nvim
+set -Ux VISUAL nvim
+
+set -gx PATH /home/sean/bin $PATH
+set -gx PATH /home/sean/.npm-global $PATH

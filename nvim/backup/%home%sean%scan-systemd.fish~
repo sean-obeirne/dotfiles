@@ -1,0 +1,62 @@
+#!/usr/bin/env fish
+
+# Usage: ./scan-systemd.fish [OUTPUT_FILE]
+set -l OUT "/tmp/systemd-units-dump.txt"
+if test (count $argv) -ge 1
+    set OUT $argv[1]
+end
+
+# Ensure parent dir exists, then truncate
+mkdir -p (dirname -- $OUT)
+command true > $OUT
+
+function dump_scope --argument-names scope
+    set -l scflag ""
+    set -l label "SYSTEM"
+    if test "$scope" = "user"
+        set scflag "--user"
+        set label "USER"
+    end
+
+    # Collect a broad set of unit types
+    set -l units (systemctl $scflag list-unit-files --all \
+        --type=service --type=socket --type=timer --type=target \
+        --type=path --type=mount --type=automount --type=swap \
+        --no-legend | awk '{print $1}' | sort -u)
+
+    printf "##### BEGIN %s UNITS (%s) #####\n" $label (date) >> $OUT
+    for u in $units
+        echo >> $OUT
+        printf "===== %s UNIT: %s =====\n" $label $u >> $OUT
+        # Write merged definition (incl. drop-ins) or a note if missing
+        if not systemctl $scflag cat $u >> $OUT 2>/dev/null
+            echo "# (no content; template/generated/missing)" >> $OUT
+        end
+    end
+    printf "##### END %s UNITS #####\n" $label >> $OUT
+end
+
+dump_scope system
+dump_scope user
+
+echo "Dump written to: $OUT"
+echo
+
+echo "=== Matches for 'boot|booting|waybar' (case-insensitive) in the merged dump ==="
+# Use PCRE (-P) so \b word boundaries work
+rg -nPi '(^|\b)boot(ing)?(\b|$)|waybar' -C2 "$OUT"
+or echo "No matches in merged dump."
+
+echo
+echo "=== Quick filesystem scan of common unit directories (for raw files) ==="
+set -l dirs \
+    ~/.config/systemd/user \
+    /etc/systemd/user \
+    /usr/lib/systemd/user \
+    /etc/systemd/system \
+    /usr/lib/systemd/system \
+    /lib/systemd/system
+
+rg -nPi '(^|\b)boot(ing)?(\b|$)|waybar' $dirs 2>/dev/null
+or echo "No matches in raw files."
+

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# author:	Sean O'Beirne
+# file:		focus_or_launch_cycle
+
+# usage: focus_or_launch_cycle <class_regex> <command...>
+
+# Example: focus_or_launch_cycle "Code" cod
+
+################################################################################

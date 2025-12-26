@@ -1,0 +1,6 @@
+# Extra autostart processes
+# exec-once = uwsm app -- my-service
+exec = pkill -x swaybg; swaybg -o DP-2 -c '#000000' -o DP-3 -c '#000000'
+exec = pkill -x swaybg; swaybg exec = pkill -x swaybg; swaybg -o DP-2 -c \#000000 -o DP-3 -c \#000000
+exec = pkill -x swaybg; swaybg -o DP-2 -c \#000000 -o DP-3 -c \#000000
+exec = pkill -x swaybg; swaybg -o DP-2 -c \#000000 -o DP-3 -c \#000000
