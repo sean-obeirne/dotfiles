@@ -211,7 +211,7 @@
         "when": "workbench.view.search.active && neverMatch =~ /doesNotMatch/"
     },
     {
-        "key": "shift+`",
+        "key": "ctrl+e",
         "command": "workbench.action.toggleSidebarVisibility"
     },
     {
@@ -229,7 +229,7 @@
         "when": "!terminalFocus"
     },
     {
-        "key": "ctrl+`",
+        "key": "ctrl+shift+c",
         "command": "workbench.panel.chat",
         "when": "workbench.panel.chat.view.copilot.active"
     },
@@ -244,7 +244,7 @@
         "when": "accessibilityHelpIsShown"
     },
     {
-        "key": "`",
+        "key": "ctrl+t",
         "command": "workbench.action.terminal.toggleTerminal",
         "when": "terminal.active"
     },
