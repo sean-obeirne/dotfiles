@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Backup VS Code extensions list
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+EXTENSIONS_FILE="$DOTFILES_DIR/vscode/extensions.list"
+BACKUP_DIR="$DOTFILES_DIR/.backups"
+
+mkdir -p "$DOTFILES_DIR/vscode"
+
+# Backup existing extensions.list if it exists
+if [ -f "$EXTENSIONS_FILE" ]; then
+    mkdir -p "$BACKUP_DIR"
+    timestamp=$(date +%Y%m%d_%H%M%S)
+    backup_path="$BACKUP_DIR/extensions.list.backup_$timestamp"
+    cp "$EXTENSIONS_FILE" "$backup_path"
+    echo "✓ Backed up existing extensions.list to .backups/"
+fi
+
+echo "# VS Code Extensions" > "$EXTENSIONS_FILE"
+echo "# Restore with: cat vscode/extensions.list | grep -v '^#' | xargs -L 1 code --install-extension" >> "$EXTENSIONS_FILE"
+echo "" >> "$EXTENSIONS_FILE"
+
+code --list-extensions >> "$EXTENSIONS_FILE"
+
+echo "✓ Extensions list saved to vscode/extensions.list"

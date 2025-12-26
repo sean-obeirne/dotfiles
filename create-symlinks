@@ -101,7 +101,7 @@ restore_backups() {
             fi
             
             echo -e "${GREEN}Restoring: $latest_backup -> $dest${NC}"
-            cp -P "$latest_backup" "$dest"
+            cp -rP "$latest_backup" "$dest"
         else
             echo -e "${YELLOW}No backup found for: $dest${NC}"
         fi

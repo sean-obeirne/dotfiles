@@ -1,0 +1,3 @@
+# VS Code Extensions
+# Restore with: cat vscode/extensions.list | grep -v '^#' | xargs -L 1 code --install-extension
+
