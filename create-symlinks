@@ -62,8 +62,8 @@ backup_file() {
     
     mkdir -p "$BACKUP_DIR"
     
-    if [ -f "$file" ] || [ -L "$file" ]; then
-        cp -P "$file" "$backup_path"
+    if [ -e "$file" ] || [ -L "$file" ]; then
+        cp -rP "$file" "$backup_path"
         echo -e "${YELLOW}  Backed up: $file -> $backup_path${NC}"
         return 0
     fi
@@ -166,7 +166,13 @@ create_symlinks() {
                 
                 # Copy file/directory to repo
                 if [ "$DRY_RUN" = false ]; then
-                    cp -r "$dest" "$source_path"
+                    if [ -d "$dest" ]; then
+                        # For directories, copy contents not the directory itself
+                        cp -r "$dest" "$(dirname "$source_path")/"
+                    else
+                        # For files, copy directly
+                        cp "$dest" "$source_path"
+                    fi
                     echo -e "${GREEN}  Copied to repo: $source_path${NC}"
                 else
                     echo -e "${YELLOW}  Would copy to repo: $dest -> $source_path${NC}"
@@ -211,7 +217,7 @@ create_symlinks() {
         
         # Remove existing file/symlink and create new symlink
         if [ "$DRY_RUN" = false ]; then
-            rm -f "$dest"
+            rm -rf "$dest"
             ln -s "$source_path" "$dest"
             echo -e "${GREEN}  Created symlink: $dest -> $source_path${NC}"
         else
