@@ -1,0 +1,142 @@
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.bright]
+black = "#5b6268"
+blue = "#3071db"
+cyan = "#46d9ff"
+green = "#4db5bd"
+magenta = "#a9a1e1"
+red = "#da8548"
+white = "#dfdfdf"
+yellow = "#ecbe7b"
+
+[colors.cursor]
+cursor = "#528bff"
+text = "CellBackground"
+
+[colors.normal]
+black = "#1c1f24"
+blue = "#51afef"
+cyan = "#5699af"
+green = "#98be65"
+magenta = "#c678dd"
+red = "#ff6c6b"
+white = "#abb2bf"
+yellow = "#da8548"
+
+[colors.primary]
+background = "#080c04"
+foreground = "#dbe2ef"
+
+[colors.selection]
+background = "#5e6471"
+text = "CellForeground"
+
+[cursor]
+style = "Block"
+unfocused_hollow = true
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 18.0
+
+[font.bold]
+style = "Bold"
+
+[font.bold_italic]
+style = "Bold Italic"
+
+[font.italic]
+style = "Italic"
+
+[font.normal]
+family = "UbuntuMono Nerd Font"
+style = "Regular"
+
+[font.offset]
+x = 0
+y = 1
+
+[[keyboard.bindings]]
+action = "Copy"
+key = "C"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+action = "Paste"
+key = "V"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+action = "ResetFontSize"
+key = "Key0"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "IncreaseFontSize"
+key = "Equals"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "DecreaseFontSize"
+key = "Minus"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "Paste"
+key = "Paste"
+
+[[keyboard.bindings]]
+action = "Copy"
+key = "Copy"
+
+[[keyboard.bindings]]
+chars = "\f"
+key = "L"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "ScrollPageUp"
+key = "PageUp"
+mode = "~Alt"
+mods = "Shift"
+
+[[keyboard.bindings]]
+action = "ScrollPageDown"
+key = "PageDown"
+mode = "~Alt"
+mods = "Shift"
+
+[[keyboard.bindings]]
+action = "ScrollToTop"
+key = "Home"
+mode = "~Alt"
+mods = "Shift"
+
+[[keyboard.bindings]]
+action = "ScrollToBottom"
+key = "End"
+mode = "~Alt"
+mods = "Shift"
+
+[general]
+live_config_reload = true
+
+[scrolling]
+history = 5000
+
+[window]
+dynamic_padding = false
+opacity = 0.25
+title = "Alacritty"
+
+[window.class]
+general = "Alacritty"
+instance = "Alacritty"
+
+[window.padding]
+x = 25
+y = 15
