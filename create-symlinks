@@ -1,0 +1,241 @@
+#!/bin/bash
+
+# author:	Sean O'Beirne
+# file:		create-symlinks
+
+# usage: create-symlinks [--dry-run] [--restore]
+
+# for all files in this branch, replace all existing config files all around in
+# to this repo's config files the filesystem with symlinks
+
+################################################################################
+
+set -e  # Exit on error
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Get the directory where this script is located
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MANIFEST_FILE="$DOTFILES_DIR/symlinks.conf"
+BACKUP_DIR="$DOTFILES_DIR/.backups"
+
+# Parse command line arguments
+DRY_RUN=false
+RESTORE=false
+
+for arg in "$@"; do
+    case $arg in
+        --dry-run)
+            DRY_RUN=true
+            ;;
+        --restore)
+            RESTORE=true
+            ;;
+        *)
+            echo -e "${RED}Unknown option: $arg${NC}"
+            echo "Usage: $0 [--dry-run] [--restore]"
+            exit 1
+            ;;
+    esac
+done
+
+# Function to expand path (handle ~ and environment variables)
+expand_path() {
+    local path="$1"
+    # Expand tilde
+    path="${path/#\~/$HOME}"
+    # Expand environment variables
+    eval echo "$path"
+}
+
+# Function to backup a file
+backup_file() {
+    local file="$1"
+    local timestamp=$(date +%Y%m%d_%H%M%S)
+    local backup_name="$(basename "$file").backup_$timestamp"
+    local backup_path="$BACKUP_DIR/$backup_name"
+    
+    mkdir -p "$BACKUP_DIR"
+    
+    if [ -f "$file" ] || [ -L "$file" ]; then
+        cp -P "$file" "$backup_path"
+        echo -e "${YELLOW}  Backed up: $file -> $backup_path${NC}"
+        return 0
+    fi
+    return 1
+}
+
+# Function to restore backups
+restore_backups() {
+    if [ ! -d "$BACKUP_DIR" ]; then
+        echo -e "${RED}No backup directory found at $BACKUP_DIR${NC}"
+        exit 1
+    fi
+    
+    echo -e "${BLUE}Restoring backups...${NC}"
+    
+    while IFS=':' read -r source dest || [ -n "$source" ]; do
+        # Skip comments and empty lines
+        [[ "$source" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$source" ]] && continue
+        
+        # Trim whitespace
+        source=$(echo "$source" | xargs)
+        dest=$(echo "$dest" | xargs)
+        
+        dest=$(expand_path "$dest")
+        
+        # Find the most recent backup for this file
+        local basename=$(basename "$dest")
+        local latest_backup=$(ls -t "$BACKUP_DIR/${basename}.backup_"* 2>/dev/null | head -1)
+        
+        if [ -n "$latest_backup" ]; then
+            if [ -L "$dest" ]; then
+                echo -e "${BLUE}Removing symlink: $dest${NC}"
+                rm "$dest"
+            fi
+            
+            echo -e "${GREEN}Restoring: $latest_backup -> $dest${NC}"
+            cp -P "$latest_backup" "$dest"
+        else
+            echo -e "${YELLOW}No backup found for: $dest${NC}"
+        fi
+        
+    done < "$MANIFEST_FILE"
+    
+    echo -e "${GREEN}Restore complete!${NC}"
+    exit 0
+}
+
+# Main symlink creation logic
+create_symlinks() {
+    # Check if manifest file exists
+    if [ ! -f "$MANIFEST_FILE" ]; then
+        echo -e "${RED}Error: Manifest file not found at $MANIFEST_FILE${NC}"
+        exit 1
+    fi
+    
+    if [ "$DRY_RUN" = true ]; then
+        echo -e "${BLUE}=== DRY RUN MODE ===${NC}"
+        echo -e "${BLUE}No changes will be made${NC}"
+        echo ""
+    fi
+    
+    # Read manifest file line by line
+    while IFS=':' read -r source dest || [ -n "$source" ]; do
+        # Skip comments and empty lines
+        [[ "$source" =~ ^[[:space:]]*# ]] && continue
+        [[ -z "$source" ]] && continue
+        
+        # Trim whitespace
+        source=$(echo "$source" | xargs)
+        dest=$(echo "$dest" | xargs)
+        
+        # Skip if either is empty
+        [ -z "$source" ] || [ -z "$dest" ] && continue
+        
+        # Expand destination path
+        dest=$(expand_path "$dest")
+        
+        # Full path to source file
+        source_path="$DOTFILES_DIR/$source"
+        
+        echo -e "${BLUE}Processing: $source -> $dest${NC}"
+        
+        # Check if source exists in repo, if not try to copy from destination
+        if [ ! -e "$source_path" ]; then
+            if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+                # Destination exists and is a real file, copy it to repo
+                echo -e "${YELLOW}  Source not in repo, copying from system: $dest${NC}"
+                
+                # Create source directory if needed
+                source_dir=$(dirname "$source_path")
+                if [ ! -d "$source_dir" ]; then
+                    if [ "$DRY_RUN" = false ]; then
+                        mkdir -p "$source_dir"
+                        echo -e "${GREEN}  Created directory: $source_dir${NC}"
+                    else
+                        echo -e "${YELLOW}  Would create directory: $source_dir${NC}"
+                    fi
+                fi
+                
+                # Copy file/directory to repo
+                if [ "$DRY_RUN" = false ]; then
+                    cp -r "$dest" "$source_path"
+                    echo -e "${GREEN}  Copied to repo: $source_path${NC}"
+                else
+                    echo -e "${YELLOW}  Would copy to repo: $dest -> $source_path${NC}"
+                fi
+            else
+                echo -e "${RED}  Error: Source not in repo and destination doesn't exist or is already a symlink${NC}"
+                continue
+            fi
+        fi
+        
+        # Check if destination already exists
+        if [ -e "$dest" ] || [ -L "$dest" ]; then
+            # Check if it's already a symlink to our source
+            if [ -L "$dest" ]; then
+                current_target=$(readlink "$dest")
+                if [ "$current_target" = "$source_path" ]; then
+                    echo -e "${GREEN}  Already linked correctly${NC}"
+                    continue
+                else
+                    echo -e "${YELLOW}  Existing symlink points to: $current_target${NC}"
+                fi
+            fi
+            
+            # Backup existing file/symlink
+            if [ "$DRY_RUN" = false ]; then
+                backup_file "$dest"
+            else
+                echo -e "${YELLOW}  Would backup: $dest${NC}"
+            fi
+        fi
+        
+        # Create parent directory if needed
+        dest_dir=$(dirname "$dest")
+        if [ ! -d "$dest_dir" ]; then
+            if [ "$DRY_RUN" = false ]; then
+                mkdir -p "$dest_dir"
+                echo -e "${GREEN}  Created directory: $dest_dir${NC}"
+            else
+                echo -e "${YELLOW}  Would create directory: $dest_dir${NC}"
+            fi
+        fi
+        
+        # Remove existing file/symlink and create new symlink
+        if [ "$DRY_RUN" = false ]; then
+            rm -f "$dest"
+            ln -s "$source_path" "$dest"
+            echo -e "${GREEN}  Created symlink: $dest -> $source_path${NC}"
+        else
+            echo -e "${YELLOW}  Would create symlink: $dest -> $source_path${NC}"
+        fi
+        
+    done < "$MANIFEST_FILE"
+    
+    if [ "$DRY_RUN" = true ]; then
+        echo ""
+        echo -e "${BLUE}=== DRY RUN COMPLETE ===${NC}"
+        echo -e "${BLUE}Run without --dry-run to apply changes${NC}"
+    else
+        echo ""
+        echo -e "${GREEN}All symlinks created successfully!${NC}"
+        echo -e "${YELLOW}Backups stored in: $BACKUP_DIR${NC}"
+    fi
+}
+
+# Main execution
+if [ "$RESTORE" = true ]; then
+    restore_backups
+else
+    create_symlinks
+fi
+
+
