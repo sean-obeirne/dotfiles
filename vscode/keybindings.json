@@ -229,7 +229,7 @@
         "when": "!terminalFocus"
     },
     {
-        "key": "ctrl+shift+c",
+        "key": "ctrl+shift+g",
         "command": "workbench.panel.chat",
         "when": "workbench.panel.chat.view.copilot.active"
     },

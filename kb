@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# author:	Sean O'Beirne
+# file:		kb
+
+# usage: kb 
+
+# compile or flash moonlander keyboard
+
+################################################################################
+
+action=$(read -p "Enter action ([C]ompile/[f]lash): " action; echo $action)
+case $action in
+    [cC]* )
+        echo "✓ Compiling keymap.c"
+        cd ~/code/moonlander/keyboards/zsa/moonlander/keymaps/sean
+        qmk compile -kb zsa/moonlander -km sean
+        ;;
+    [fF]* )
+        echo "✓ Flashing keyboard"
+        cd ~/code/moonlander/keyboards/zsa/moonlander/keymaps/sean
+        sudo /home/sean/.local/bin/qmk flash -kb zsa/moonlander -km sean
+        ;;
+    * )
+        echo "✗ Invalid action. Please enter 'C' to compile or 'F' to flash."
+        exit 1
+        ;;
+esac
