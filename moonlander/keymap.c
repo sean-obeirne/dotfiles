@@ -19,12 +19,15 @@
 #include QMK_KEYBOARD_H
 #include "version.h"
 
+// Macro for LGUI+LALT combinations (for launcher hotkeys)
+#define LGA(kc) LGUI(LALT(kc))
+
 // Macro for Shift+LGUI combinations (for moving windows to workspaces)
 
 enum layers
 {
     BASE,   // default layer
-    RS,     // utility layer (stays the same)
+    RS,     // runescape layer
     LAUNCH, // launch layer (launch applications)
 };
 
@@ -48,9 +51,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [LAUNCH] = LAYOUT(
         _______, _______   , _______, _______   , _______   , _______   , _______ ,        _______, _______   , _______   , _______, _______, _______   , _______     ,
-        _______, LGUI(KC_W), _______, LGUI(KC_E), LGUI(KC_R), LGUI(KC_T), _______ ,        _______, LGUI(KC_Y), _______   , _______, _______, LGUI(KC_P), _______     ,
-        _______, _______   , LGUI(KC_S), _______, LGUI(KC_F), LGUI(KC_G), _______ ,        _______, _______   , _______   , _______, _______, _______   , LGUI(KC_ENT),
-        _______, _______   , _______, LGUI(KC_C), LGUI(KC_V), LGUI(KC_B),                           LGUI(KC_N), LGUI(KC_M), _______, _______, _______   , _______     ,
+        _______, LGA(KC_W), _______, LGA(KC_E), LGA(KC_R), LGA(KC_T), _______ ,        _______, LGA(KC_Y), _______   , _______, _______, LGA(KC_P), _______     ,
+        _______, _______   , LGA(KC_S), _______, LGA(KC_F), LGA(KC_G), _______ ,        _______, _______   , _______   , _______, _______, _______   , LGA(KC_ENT),
+        _______, _______   , _______, LGA(KC_C), LGA(KC_V), LGA(KC_B),                           LGA(KC_N), LGA(KC_M), _______, _______, _______   , _______     ,
         _______, _______   , _______, _______   , _______   ,             TO(BASE),        _______,             _______   , _______, _______, _______   , QK_BOOT     ,
                                                   _______   , _______   , _______ ,        _______, _______   , _______
     ),
