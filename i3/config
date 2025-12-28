@@ -131,9 +131,9 @@ bindsym $mod+r reload
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-        status_command i3status
-}
+# bar {
+#         status_command i3status
+# }
 
 #Remove window borders
 for_window [class=".*"] border pixel 0
