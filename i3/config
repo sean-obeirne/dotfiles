@@ -170,7 +170,7 @@ bindsym $launch+g exec --no-startup-id i3-msg '[class="steam"] focus' || steam
 bindsym $launch+Return exec --no-startup-id i3-msg '[class="Alacritty"] focus' || alacritty
 bindsym $launch+c exec --no-startup-id i3-msg '[title="ChatGPT"] focus' || flatpak run io.github.openai.chatgpt
 bindsym $launch+v exec --no-startup-id i3-msg '[class="Code"] focus' || code
-bindsym $launch+b exec --no-startup-id i3-msg '[class="firefox"] focus' || firefox
+bindsym $launch+b exec --no-startup-id i3-msg '[class="BambuStudio"] focus' || flatpak run com.bambulab.BambuStudio
 bindsym $launch+n exec --no-startup-id i3-msg '[class="Nautilus"] focus' || nautilus
 bindsym $launch+m exec --no-startup-id i3-msg '[class="Spotify"] focus' || spotify
 
@@ -186,6 +186,6 @@ bindsym $launch+Shift+g exec steam &
 bindsym $launch+Shift+Return exec alacritty &
 bindsym $launch+Shift+c exec flatpak run io.github.openai.chatgpt &
 bindsym $launch+Shift+v exec code &
-bindsym $launch+Shift+b exec firefox &
+bindsym $launch+Shift+b exec flatpak run com.bambulab.BambuStudio &
 bindsym $launch+Shift+n exec nautilus &
 bindsym $launch+Shift+m exec spotify &
