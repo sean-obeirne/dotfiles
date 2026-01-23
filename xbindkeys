@@ -28,11 +28,11 @@
 
 # Side button (back) = Escape
 "xdotool key Escape"
-  b:8
+  b:9
 
 # Side button (forward) = Space
 "xdotool key space"
-  b:9
+  b:8
 
 
 # The release modifier is not a standard X modifier, but you can
@@ -48,16 +48,16 @@
 
 # Examples of commands:
 
-"xbindkeys_show" 
-  control+shift + q
+# "xbindkeys_show" 
+  # control+shift + q
 
 # set directly keycode (here control + f with my keyboard)
-"xterm"
-  c:41 + m:0x4
+# "xterm"
+  # c:41 + m:0x4
 
 # specify a mouse button
-"xterm"
-  control + b:2
+# "xterm"
+  # control + b:2
 
 #"xterm -geom 50x20+20+20"
 #   Shift+Mod2+alt + s

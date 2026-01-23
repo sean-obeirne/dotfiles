@@ -33,6 +33,8 @@ exec xbindkeys
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
+exec --no-startup-id xset s 1800 1800
+exec --no-startup-id xset dpms 300 300 300
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
 # Use Mouse+$mod to drag floating windows to their wanted position
