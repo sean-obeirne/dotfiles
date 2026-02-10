@@ -1,0 +1,60 @@
+* {
+    background-color: #000000;
+    text-color: #FFFFFF;
+    border-color: #000000;
+    border-radius: 8px;
+    padding: 4px;
+    font: "Ubuntu Mono Bold 12";
+}
+
+window {
+    border: 2px;
+    border-color: #F996FF;
+    border-radius: 8px;
+    width: 600px;
+    background-color: #000000;
+}
+
+mainbox {
+    padding: 8px;
+}
+
+inputbar {
+    padding: 8px;
+    border-radius: 6px;
+    margin: 0px 0px 8px 0px;
+    border: 2px;
+    border-color: #F996FF;
+}
+
+listview {
+    spacing: 8px;
+    scrollbar: false;
+}
+
+element {
+    border-radius: 6px;
+    background-color: #000000;
+    border: 2px;
+    border-color: #000000;
+}
+
+element selected {
+    background-color: #000000;
+    border: 2px;
+    border-color: #F996FF;
+}
+
+element-text {
+    background-color: #000000;
+    text-color: #F5F5F5;
+}
+
+prompt {
+    text-color: #F996FF;
+    padding: 0px 8px 0px 0px;
+}
+
+entry {
+    text-color: #FFFFFF;
+}
