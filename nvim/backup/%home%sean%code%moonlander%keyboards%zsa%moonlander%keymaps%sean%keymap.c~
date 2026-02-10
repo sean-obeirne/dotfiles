@@ -19,15 +19,20 @@
 #include QMK_KEYBOARD_H
 #include "version.h"
 
+// Macro for LGUI+LALT combinations (for launcher hotkeys)
+#define LGA(kc) LGUI(LALT(kc))
+
 // Macro for Shift+LGUI combinations (for moving windows to workspaces)
 
-enum layers {
+enum layers
+{
     BASE,   // default layer
-    RS,     // utility layer (stays the same)
+    RS,     // runescape layer
     LAUNCH, // launch layer (launch applications)
 };
 
-enum custom_keycodes {
+enum custom_keycodes
+{
     VRSN = SAFE_RANGE,
     LED_LEVEL,
     TOGGLE_LAYER_COLOR,
@@ -36,21 +41,21 @@ enum custom_keycodes {
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [BASE] = LAYOUT(
-        KC_GRV,  KC_1   , KC_2   , KC_3    , KC_4    , KC_5   , KC_EQL    ,     KC_BSLS    , KC_6   , KC_7   , KC_8   , KC_9   , KC_0   , KC_MINS,
-        KC_TAB,  KC_Q   , KC_W   , KC_E    , KC_R    , KC_T   , KC_LPRN   ,     KC_LBRC    , KC_Y   , KC_U   , KC_I   , KC_O   , KC_P   , KC_QUOT,
-        KC_ESC,  KC_A   , KC_S   , KC_D    , KC_F    , KC_G   , KC_RPRN   ,     KC_RBRC    , KC_H   , KC_J   , KC_K   , KC_L   , KC_SCLN, KC_ENT ,
-        KC_LSFT, KC_Z   , KC_X   , KC_C    , KC_V    , KC_B   ,                              KC_N   , KC_M   , KC_COMM, KC_DOT , KC_SLSH, KC_RSFT,
-        KC_LCTL, _______, _______, _______, KC_SPC  ,          TG(RS)     ,     OSL(LAUNCH),          KC_BSPC, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT,
-                                            KC_SPC  , KC_LGUI, OSL(LAUNCH),     LGUI(KC_F) , KC_LALT, KC_ENT
+        KC_GRV , KC_1   , KC_2   , KC_3    , KC_4    , KC_5   , KC_EQL     ,     KC_BSLS    , KC_6   , KC_7   , KC_8   , KC_9   , KC_0   , KC_MINS,
+        KC_TAB , KC_Q   , KC_W   , KC_E    , KC_R    , KC_T   , KC_LPRN    ,     KC_LBRC    , KC_Y   , KC_U   , KC_I   , KC_O   , KC_P   , KC_QUOT,
+        KC_ESC , KC_A   , KC_S   , KC_D    , KC_F    , KC_G   , KC_RPRN    ,     KC_RBRC    , KC_H   , KC_J   , KC_K   , KC_L   , KC_SCLN, KC_ENT ,
+        KC_LSFT, KC_Z   , KC_X   , KC_C    , KC_V    , KC_B   ,                               KC_N   , KC_M   , KC_COMM, KC_DOT , KC_SLSH, KC_F13 ,
+        KC_LCTL, KC_F19 , KC_F20 , KC_F21  , KC_SPC  ,          TG(RS)     ,     OSL(LAUNCH),          KC_BSPC, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT,
+                                             KC_SPC  , KC_LGUI, OSL(LAUNCH),     LGUI(KC_F) , KC_LALT, KC_ENT
     ),
 
     [LAUNCH] = LAYOUT(
-        _______, _______   , _______, _______   , _______   , _______   , _______ ,        _______, _______   , _______   , _______, _______, _______   , _______     ,
-        _______, LGUI(KC_W), _______, LGUI(KC_E), LGUI(KC_R), LGUI(KC_T), _______ ,        _______, LGUI(KC_Y), _______   , _______, _______, LGUI(KC_P), _______     ,
-        _______, _______   , LGUI(KC_S), _______, LGUI(KC_F), LGUI(KC_G), _______ ,        _______, _______   , _______   , _______, _______, _______   , LGUI(KC_ENT),
-        _______, _______   , _______, LGUI(KC_C), LGUI(KC_V), LGUI(KC_B),                           LGUI(KC_N), LGUI(KC_M), _______, _______, _______   , _______     ,
-        _______, _______   , _______, _______   , _______   ,             TO(BASE),        _______,             _______   , _______, _______, _______   , QK_BOOT     ,
-                                                  _______   , _______   , _______ ,        _______, _______   , _______
+        _______, LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5), _______ ,        _______, LGUI(KC_6), LGUI(KC_7), LGUI(KC_8), LGUI(KC_9), LGUI(KC_0), _______     ,
+        _______, LGA(KC_W) , _______   , LGA(KC_E) , LGA(KC_R) , LGA(KC_T) , _______ ,        _______, LGA(KC_Y) , _______   , _______   , _______   , LGA(KC_P) , _______     ,
+        _______, _______   , LGA(KC_S) , _______   , LGA(KC_F) , LGA(KC_G) , _______ ,        _______, _______   , _______   , _______   , _______   , _______   , LGA(KC_ENT) ,
+        _______, _______   , _______   , LGA(KC_C) , LGA(KC_V) , LGA(KC_B) ,                           LGA(KC_N) , LGA(KC_M) , _______   , _______   , _______   , _______     ,
+        _______, _______   , _______   , _______   , _______   ,             TO(BASE),        _______,             _______   , _______   , _______   , _______   , QK_BOOT     ,
+                                                     _______   , _______   , _______ ,        _______, _______   , _______
     ),
 
     [RS] = LAYOUT(
@@ -154,9 +159,9 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     }
 
     // Don't modify LEDs on BASE layer
-    if (layer == BASE) {
-        return false;
-    }
+    // if (layer == BASE) {
+    //     return false;
+    // }
 
     // LED position mapping - shared across all layers
     const uint8_t led_positions[6][14] = {
@@ -169,19 +174,38 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     };
 
     const rgb_color_t rgb_maps[][6][14] = {
+        // [BASE] = {
+        //     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+        //     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+        //     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+        //     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+        //     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+        //     {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
+        // },
         [BASE] = {
-            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
-            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
-            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
-            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
-            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
-            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
+            // Row 1: grave(GREEN), numbers(WHITE), equals(GREEN), backslash(GREEN), numbers(WHITE), minus(GREEN)
+            {GREEN, WHITE, WHITE, WHITE, WHITE, WHITE, GREEN,       GREEN, WHITE, WHITE, WHITE, WHITE, WHITE, GREEN},
+
+            // Row 2: Tab(BLUE_), letters(WHITE), left paren(GREEN), left bracket(GREEN), letters(WHITE), quote(GREEN)
+            {BLUE_, WHITE, WHITE, WHITE, WHITE, WHITE, GREEN,       GREEN, WHITE, WHITE, WHITE, WHITE, WHITE, GREEN},
+
+            // Row 3: Esc(RED__), letters(WHITE), right paren(GREEN), right bracket(GREEN), letters(WHITE), semicolon(GREEN), Enter(PURPL)
+            {RED__, WHITE, WHITE, WHITE, WHITE, WHITE, GREEN,       GREEN, WHITE, WHITE, WHITE, WHITE, GREEN, PURPL},
+
+            // Row 4: Shift(BLUE_), letters(WHITE), letters/symbols: N,M(WHITE), comma/dot/slash(GREEN), Shift(BLUE_)
+            {BLUE_, WHITE, WHITE, WHITE, WHITE, WHITE, OFF__,       OFF__, WHITE, WHITE, GREEN, GREEN, GREEN, BLUE_},
+
+            // Row 5: Ctrl(BLUE_), F-keys(PURPL), Space(OFF), TG(PURPL), OSL(PURPL), Backspace(PURPL), arrows(PURPL)
+            {BLUE_, PURPL, PURPL, PURPL, WHITE, OFF__, OFF__,       OFF__, OFF__, RED__, PURPL, PURPL, PURPL, PURPL},
+
+            // Thumb cluster: Space(OFF), GUI(BLUE_), OSL(PURPL), special combo(PURPL), Alt(BLUE_), Enter(PURPL)
+            {OFF__, OFF__, OFF__, WHITE, BLUE_, PURPL, PURPL,       PURPL, PURPL, BLUE_, WHITE}
         },
         [LAUNCH] = {
-            {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, PURPL, PURPL, PURPL, PURPL, PURPL, OFF__,       OFF__, PURPL, PURPL, PURPL, PURPL, PURPL, OFF__},
             {OFF__, CYAN_, OFF__, YELLW, RED__, PURPL, OFF__,       OFF__, WHITE, OFF__, OFF__, OFF__, WHITE, OFF__},
             {OFF__, OFF__, GREEN, OFF__, ORNG_, GRAY_, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, PURPL},
-            {OFF__, OFF__, OFF__, D_GRN, BLUE_, GRN__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, OFF__, OFF__, D_GRN, BLUE_, GREEN, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
             {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, WHITE},
             {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       GRAY_, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
         },
@@ -191,7 +215,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             {RED__, PURPL, PURPL, PURPL, PURPL, BLUE_, BLUE_,       OFF__, WHITE, VDRED, VDRED, VDRED, OFF__, OFF__},
             {VDRED, PURPL, PURPL, PURPL, PURPL, PURPL, OFF__,       OFF__, OFF__, VDRED, VDRED, VDRED, OFF__, OFF__},
             {OFF__, OFF__, OFF__, OFF__, BLUE_, OFF__, OFF__,       OFF__, OFF__, VDRED, D_GRN, D_GRN, D_GRN, D_GRN},
-            {OFF__, OFF__, OFF__, D_RED, OFF__, GREEN, GRAY_,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
+            {OFF__, OFF__, OFF__, D_RED, OFF__, GREEN, GRAY_,       GREEN, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
         }
     };
 
