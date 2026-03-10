@@ -41,7 +41,7 @@ unfocused_hollow = true
 TERM = "xterm-256color"
 
 [font]
-size = 18.0
+size = 15.0
 
 [font.bold]
 style = "Bold"
@@ -140,3 +140,8 @@ instance = "Alacritty"
 [window.padding]
 x = 25
 y = 15
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001B\r"

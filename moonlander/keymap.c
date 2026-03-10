@@ -36,6 +36,7 @@ enum custom_keycodes
     VRSN = SAFE_RANGE,
     LED_LEVEL,
     TOGGLE_LAYER_COLOR,
+    F13_BASE,
 };
 
 // clang-format off
@@ -44,7 +45,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV , KC_1   , KC_2   , KC_3    , KC_4    , KC_5   , KC_EQL     ,     KC_BSLS    , KC_6   , KC_7   , KC_8   , KC_9   , KC_0   , KC_MINS,
         KC_TAB , KC_Q   , KC_W   , KC_E    , KC_R    , KC_T   , KC_LPRN    ,     KC_LBRC    , KC_Y   , KC_U   , KC_I   , KC_O   , KC_P   , KC_QUOT,
         KC_ESC , KC_A   , KC_S   , KC_D    , KC_F    , KC_G   , KC_RPRN    ,     KC_RBRC    , KC_H   , KC_J   , KC_K   , KC_L   , KC_SCLN, KC_ENT ,
-        KC_LSFT, KC_Z   , KC_X   , KC_C    , KC_V    , KC_B   ,                               KC_N   , KC_M   , KC_COMM, KC_DOT , KC_SLSH, KC_F13 ,
+        KC_LSFT, KC_Z   , KC_X   , KC_C    , KC_V    , KC_B   ,                               KC_N   , KC_M   , KC_COMM, KC_DOT , KC_SLSH, F13_BASE,
         KC_LCTL, KC_F19 , KC_F20 , KC_F21  , KC_SPC  ,          TG(RS)     ,     OSL(LAUNCH),          KC_BSPC, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT,
                                              KC_SPC  , KC_LGUI, OSL(LAUNCH),     LGUI(KC_F) , KC_LALT, KC_ENT
     ),
@@ -53,7 +54,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, LGUI(KC_1), LGUI(KC_2), LGUI(KC_3), LGUI(KC_4), LGUI(KC_5), _______ ,        _______, LGUI(KC_6), LGUI(KC_7), LGUI(KC_8), LGUI(KC_9), LGUI(KC_0), _______     ,
         _______, LGA(KC_W) , _______   , LGA(KC_E) , LGA(KC_R) , LGA(KC_T) , _______ ,        _______, LGA(KC_Y) , _______   , _______   , _______   , LGA(KC_P) , _______     ,
         _______, _______   , LGA(KC_S) , _______   , LGA(KC_F) , LGA(KC_G) , _______ ,        _______, _______   , _______   , _______   , _______   , _______   , LGA(KC_ENT) ,
-        _______, _______   , _______   , LGA(KC_C) , LGA(KC_V) , LGA(KC_B) ,                           LGA(KC_N) , LGA(KC_M) , _______   , _______   , _______   , _______     ,
+        _______, _______   , _______   , LGA(KC_C) , LGA(KC_V) , LGA(KC_B) ,                           LGA(KC_N) , LGA(KC_M) , _______   , _______   , _______   , F13_BASE    ,
         _______, _______   , _______   , _______   , _______   ,             TO(BASE),        _______,             _______   , _______   , _______   , _______   , QK_BOOT     ,
                                                      _______   , _______   , _______ ,        _______, _______   , _______
     ),
@@ -62,7 +63,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV , _______, _______, _______, _______, _______,  _______,        _______    , _______ , _______, _______, _______, _______, _______,
         KC_L   , KC_1   , KC_2   , KC_3   , KC_4   , KC_5   ,  _______,        _______    , KC_6    , KC_7   , KC_8   , KC_9   , KC_B   , _______,
         KC_ESC , KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_LSFT,  KC_LALT,        _______    , TO(BASE), KC_4   , KC_5   , KC_6   , KC_C   , _______,
-        KC_C   , KC_F5  , KC_F6  , KC_F7  , KC_F8  , KC_F10 ,                               MS_BTN1 , KC_1   , KC_2   , KC_3   , _______, _______,
+        KC_C   , KC_F5  , KC_F6  , KC_F7  , KC_F8  , KC_F10 ,                               MS_BTN1 , KC_1   , KC_2   , KC_3   , _______, F13_BASE,
         _______, _______, _______, _______, KC_LCTL,          TO(BASE),        OSL(LAUNCH),           KC_0   , KC_0   , KC_5   , KC_1   ,    KC_6,
                                             KC_SPC , _______,  _______,        _______    , _______ , KC_BSPC
     ),
@@ -74,6 +75,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         switch (keycode) {
         case VRSN:
             SEND_STRING (QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
+            return false;
+        case F13_BASE:
+            layer_move(BASE);
+            tap_code(KC_F13);
             return false;
         }
     }
@@ -181,7 +186,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             {OFF__, PURPL, PURPL, PURPL, PURPL, PURPL, OFF__,       OFF__, PURPL, PURPL, PURPL, PURPL, PURPL, OFF__},
             {OFF__, CYAN_, OFF__, YELLW, RED__, PURPL, OFF__,       OFF__, WHITE, OFF__, OFF__, OFF__, WHITE, OFF__},
             {OFF__, OFF__, GREEN, OFF__, ORNG_, GRAY_, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, PURPL},
-            {OFF__, OFF__, OFF__, D_GRN, BLUE_, GREEN, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
+            {OFF__, OFF__, OFF__, D_GRN, BLUE_, GREEN, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, YELLW},
             {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, WHITE},
             {OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       GRAY_, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
         },
@@ -189,7 +194,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             {PURPL, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__,       OFF__, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__},
             {VDRED, VDRED, VDRED, VDRED, VDRED, VDRED, OFF__,       OFF__, OFF__, VDRED, VDRED, VDRED, OFF__, OFF__},
             {RED__, PURPL, PURPL, PURPL, PURPL, BLUE_, BLUE_,       OFF__, WHITE, VDRED, VDRED, VDRED, OFF__, OFF__},
-            {VDRED, PURPL, PURPL, PURPL, PURPL, PURPL, OFF__,       OFF__, OFF__, VDRED, VDRED, VDRED, OFF__, OFF__},
+            {VDRED, PURPL, PURPL, PURPL, PURPL, PURPL, OFF__,       OFF__, OFF__, VDRED, VDRED, VDRED, OFF__, YELLW},
             {OFF__, OFF__, OFF__, OFF__, BLUE_, OFF__, OFF__,       OFF__, OFF__, VDRED, D_GRN, D_GRN, D_GRN, D_GRN},
             {OFF__, OFF__, OFF__, D_RED, OFF__, GREEN, GRAY_,       GREEN, OFF__, OFF__, OFF__, OFF__, OFF__, OFF__}
         }

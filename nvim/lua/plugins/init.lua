@@ -61,9 +61,7 @@ return {
 
     { "ahmedkhalf/project.nvim", event = "VimEnter" },
 
-    { "toppair/peek.nvim", ft = "markdown", config = function()
-        require("plugins.vscode-peek").setup()
-    end },
+    { "toppair/peek.nvim", ft = "markdown" },
 
     { "lewis6991/gitsigns.nvim", config = function()
         require("gitsigns").setup()

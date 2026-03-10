@@ -1,5 +1,5 @@
 # cd shortcuts
-alias cdp='cd ~/code/projectariums/'
+alias cdp='cd ~/code/active/'
 alias cdb='cd ~/code/macro-blues/zephyr/'
 alias cdm='cd ~/code/tfg/Mission-Uplink'
 alias tfg='cd ~/code/tfg'
@@ -8,6 +8,7 @@ alias cdd='cd ~/dotfiles'
 alias cdk='cd ~/code/moonlander/keyboards/zsa/moonlander/keymaps/sean/'
 alias cdpj='cd ~/code/projectariums/projectarium-v2/'
 alias cdn='cd ~/.config/hypr/'
+alias cdo='cd ~/.openclaw/workspace/skills/scraper/scripts/'
 
 # nvim shortcuts
 alias vim='nvim'
@@ -25,7 +26,8 @@ alias mt='make test'
 alias mf='make fmt'
 alias mc='make check'
 alias qf='cd /home/sean/code/moonlander/keyboards; qmk compile -kb zsa/moonlander -km sean; qmk flash -kb zsa/moonlander -km sean; cd /home/sean/code/moonlander/keyboards/zsa/moonlander/keymaps/sean'
-alias pjr='cd /home/sean/code/projectariums/projectarium-v2; docker compose up -d --build'
+alias pjr='cd /home/sean/code/active/projectarium-v2; docker compose up -d --build'
+alias pc='cd /home/sean/code/active/; code ./'
 
 # command shortcuts
 alias fif='find-in-file2'
@@ -60,6 +62,7 @@ alias docs='evince /home/sean/code/macro-blues/bluefruit-nrf52-feather-learning-
 alias ex='/home/sean/applications/exercism/exercism'
 alias cde='cd /home/sean/applications/exercism/'
 alias d='/home/sean/applications/Discord/Discord'
+alias pj2='cd /home/sean/code/active/projectarium-v2; npx expo start --tunnel'
 
 # git shortcuts
 alias pul='git pull'
@@ -80,6 +83,8 @@ alias w='cd ~/applications/dwm/; nvim config.h; sudo make clean install'
 alias irc='nvim ~/.config/i3/config'
 alias arc='nvim ~/.config/alacritty/alacritty.toml'
 alias frc='nvim ~/.config/fish/conf.d/alias.fish; source ~/.config/fish/config.fish'
+alias orc='nvim ~/documents/configs/openclaw.json'
+alias oc='cd ~/.openclaw/workspace'
 alias prc='nvim ~/.config/picom.conf'
 alias brc='nvim ~/.bashrc'
 alias nrc='cd ~/.config/nvim; nvim ./init.lua'
@@ -87,7 +92,7 @@ alias drc='cd ~/applications/dwm; nvim config.h'
 alias cdn='cd ~/.config/nvim'
 alias cdnp='cd ~/.config/nvim/lua/plugins/'
 alias vrc='nvim ~/.vim/vimrc'
-alias cdconf='cd ~/Documents/configs/tinkerhub'
+alias cdconf='cd ~/documents/configs'
 alias cdbin='cd ~/bin'
 alias cdscripts='cd ~/scripts'
 alias nva='cd ~/applications; nvim .'
@@ -96,7 +101,6 @@ alias puse='sudo nvim /etc/portage/package.use'
 alias mk='sudo nvim /etc/portage/make.conf'
 alias hrc='cd /home/sean/.config/hypr; nvim .; hyprctl reload'
 alias hr='hyprctl reload'
-alias orc='cd /home/sean/.local/share/omarchy/bin/; nvim .'
 
 # package manager
 alias ins='sudo dnf install'
@@ -117,6 +121,22 @@ alias uu='sudo dnf upgrade; flatpak update'
 # alias nvp1='cd ~/code/lua-practice/todua; nvim .'
 # alias nws='cd ~/.config/nvim/lua/plugins; nvim my_custom_dashboard.lua'
 # alias nvmn='cd ~/code/tfg/new-era; nvim notes'
+
+# openbao shortcuts
+alias bao-status='BAO_ADDR=http://127.0.0.1:8200 bao status'
+alias bao-unseal='BAO_ADDR=http://127.0.0.1:8200 bao operator unseal'
+alias bao-login='BAO_ADDR=http://127.0.0.1:8200 bao login'
+alias bao-put='BAO_ADDR=http://127.0.0.1:8200 bao kv put'
+alias bao-get='BAO_ADDR=http://127.0.0.1:8200 bao kv get'
+alias bao-list='BAO_ADDR=http://127.0.0.1:8200 bao kv list'
+
+# vaultwarden/rbw shortcuts
+alias vwget='rbw get'
+alias vwls='rbw list'
+alias vwsync='rbw sync'
+alias vwlock='rbw lock'
+alias vwedit='rbw edit'
+alias vwadd='rbw add'
 
 # Created by `pipx` on 2024-12-08 14:54:41
 set PATH $PATH /home/sean/.local/bin

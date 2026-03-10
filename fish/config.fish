@@ -12,3 +12,6 @@ source ~/.config/fish/conf.d/env.fish
 source ~/.config/fish/conf.d/prompt.fish
 source ~/.config/fish/conf.d/alias.fish
 
+
+# Scraper TUI
+alias scraper='python3 ~/.openclaw/workspace/skills/scraper/scripts/scraper_tui.py'
